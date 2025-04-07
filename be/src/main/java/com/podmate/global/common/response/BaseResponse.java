@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.podmate.global.common.code.BaseCode;
 import com.podmate.global.common.code.BaseErrorCode;
+import com.podmate.global.common.code.status.ErrorStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -39,7 +40,13 @@ public class BaseResponse<T> {
                 result);
     }
 
-
+    public static <T> BaseResponse<T> onFailure(BaseErrorCode code, String message) {
+        return new BaseResponse<>(
+                false,
+                code.getReasonHttpStatus().getCode(),
+                code.getReasonHttpStatus().getMessage(),
+                null);
+    }
     public static <T> BaseResponse<T> onFailure(String code, String message, T data) {
         return new BaseResponse<>(false, code, message, data);
     }

@@ -1,5 +1,6 @@
 package com.podmate.global.exception;
 
+// 비즈니스 로직 관련 에러 메세지 - application 계층과 관련이 있음
 public enum ErrorMessage {
     // global
     INVALID_INPUT_VALUE("입력값이 올바르지 않습니다.", "g001"),
