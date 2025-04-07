@@ -1,0 +1,28 @@
+# jwt secret key
+jwt:
+  secret: 3c92dbe1ad1c4fb8975f2b64e9f8a1923a9ebcefa76d4b11a4f3dfc7fbc8a9e2
+
+# Spring Boot OAuth2 config
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: kakao
+            client-id: 93a3056661334bba7cfccb0637eb618d
+            client-secret: POZBgKOIzAOFDdEPHPXPDmL44i2yvIhx
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+
+        provider:
+          kakao: # kakao oauth2 server
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id

@@ -1,0 +1,9 @@
+// 꼭 필요한 건 아님. 공통 설정이 있다면 여기에 적어도 됨
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // 빈칸으로 놔도 괜찮음
+    }
+}
