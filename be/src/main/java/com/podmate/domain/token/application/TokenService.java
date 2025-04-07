@@ -1,6 +1,8 @@
 package com.podmate.domain.token.application;
 
+import com.podmate.domain.token.dto.TokenResponseDto;
+
 public interface TokenService {
-    public Boolean validateToken(String token, Long userId);
-    public void updateRefreshToken(Long userId, String oldRefreshToken, String newRefreshToken);
+
+    TokenResponseDto.AuthenticationResponse reissueToken(String refreshToken);
 }

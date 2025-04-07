@@ -2,8 +2,11 @@ package com.podmate.domain.token.application;
 
 import com.podmate.domain.token.domain.entity.Token;
 import com.podmate.domain.token.domain.repository.TokenRepository;
+import com.podmate.domain.token.dto.TokenResponseDto;
+import com.podmate.domain.token.dto.TokenResponseDto.AuthenticationResponse;
 import com.podmate.global.exception.RefreshTokenNotFoundException;
 import com.podmate.global.exception.TokenBadRequestException;
+import com.podmate.global.exception.TokenUnauthorizedException;
 import com.podmate.global.util.jwt.JwtUtil;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -14,46 +17,40 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class TokenServiceImpl implements TokenService {
     private final TokenRepository tokenRepository;
     private final JwtUtil jwtUtil;
 
-    @Transactional
-    public Boolean validateToken(String token, Long userId){
-        // DB에서 해당 userId와 일치하는 리프레시토큰을 찾는다.
-        Optional<Token> savedToken = tokenRepository.findByUserId(userId);
+    @Override
+    public AuthenticationResponse reissueToken(String refreshToken) {
+        Long userId = jwtUtil.getUserId(refreshToken);
+        String role = jwtUtil.getRole(refreshToken);
 
-        // DB에서 userId에 대응되는 리프레시토큰 없으면, 유효하지 않음
-        if (savedToken.isEmpty()){
-            return false;
-        }
-
-        // 리프레시 토큰이 DB에 저장된 토큰과 일치하는지 확인
-        if (!savedToken.get().getRefreshToken().equals(token)){
-            return false;
-        }
-
-        // 리프레시 토큰의 만료여부 확인
-        if(jwtUtil.isExpired(token)){
-            return false; // 만료된 토큰은 유효하지 않음
-        }
-
-        return true; // 모든 조건 만족 시, 유효한 토큰
-    }
-
-    @Transactional
-    public void updateRefreshToken(Long userId, String oldRefreshToken, String newRefreshToken){
+        // 1. refreshToken 검증
         Token token = tokenRepository.findByUserId(userId)
-                .orElseThrow(RefreshTokenNotFoundException::new); // 404
+                .orElseThrow(RefreshTokenNotFoundException::new);
 
-        if (!token.getRefreshToken().equals(oldRefreshToken)){
-            throw new TokenBadRequestException(); // 400
+        if (!token.getRefreshToken().equals(refreshToken) || jwtUtil.isExpired(refreshToken)) {
+            throw new TokenUnauthorizedException();
         }
 
-        // 기존 토큰 삭제 및 새 토큰 저장
+        // 2. 새 토큰 발급
+        String newAccessToken = jwtUtil.createAccessToken("accessToken", userId, role, 30 * 60 * 1000L);
+        String newRefreshToken = jwtUtil.createRefreshToken("refreshToken", userId, 30 * 24 * 60 * 60 * 1000L);
+
+        // 3. DB 갱신
         tokenRepository.delete(token);
-        Token newToken = Token.toEntity(token.getUser(), newRefreshToken, LocalDateTime.now().plusDays(30));
-        tokenRepository.save(newToken);
+        tokenRepository.flush(); // 즉시 delete 쿼리 날림 -- 안 그러면 유저당 토큰 1개인 것이 유지되지 않아서, 예외가 발생했음..
+        log.info("TokenServiceImpl -- token delete 완료");
+        tokenRepository.save(Token.toEntity(token.getUser(), newRefreshToken, LocalDateTime.now().plusDays(30)));
+        log.info("TokenServiceImpl -- token save 완료");
+
+        return TokenResponseDto.AuthenticationResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
     }
+
 }

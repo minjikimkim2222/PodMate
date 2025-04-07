@@ -10,7 +10,9 @@ public enum ErrorMessage {
 
     // token
     REFRESH_TOKEN_NOT_FOUND("기존 리프레시 토큰을 찾을 수 없습니다.", "t001"),
-    DOES_NOT_MATCH_REFRESH_TOKEN("기존 리프레시 토큰이 일치하지 않습니다.", "t002");
+    DOES_NOT_MATCH_REFRESH_TOKEN("기존 리프레시 토큰이 일치하지 않습니다.", "t002"),
+    TOKEN_UNAUTHORIZED("리프레시 토큰 인증이 실패했습니다.", "t003")
+    ;
 
     private final String message;
     private final String code;
