@@ -9,14 +9,14 @@ import com.podmate.global.common.response.BaseResponse;
 import com.podmate.global.util.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.podmate.domain.token.dto.TokenResponseDto.AuthenticationResponse;
 
+// TODO: Controller에는 오직 Service 로직 위임만을 해야 하는데, 비즈니스 로직이 보인다. 리팩토링할 것
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/refresh-token")
