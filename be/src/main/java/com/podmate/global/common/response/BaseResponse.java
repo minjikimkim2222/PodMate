@@ -12,7 +12,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@JsonPropertyOrder({"isSuccess", "code", "message", "result"})
+@JsonPropertyOrder({"isSuccess", "code", "message", "path", "result"})
 public class BaseResponse<T> {
 
     @JsonProperty("isSuccess")
@@ -22,33 +22,50 @@ public class BaseResponse<T> {
     private final String message;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String path; // 요청 URI (예외용)
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
+    // 성공 응답
     public static <T> BaseResponse<T> onSuccess(BaseCode code, T result) {
         return new BaseResponse<>(
                 true,
                 code.getReasonHttpStatus().getCode(),
                 code.getReasonHttpStatus().getMessage(),
+                null,
                 result);
     }
 
+    // 실패 응답 (에러 + 추가 result)
     public static <T> BaseResponse<T> onFailure(BaseErrorCode code, T result) {
         return new BaseResponse<>(
                 false,
                 code.getReasonHttpStatus().getCode(),
                 code.getReasonHttpStatus().getMessage(),
+                null,
                 result);
     }
 
-    public static <T> BaseResponse<T> onFailure(BaseErrorCode code, String message) {
-        return new BaseResponse<>(
-                false,
+
+    // 예외 응답 (에러 + path)
+    public static <T> BaseResponse<T> onFailure(BaseErrorCode code, String path) {
+        return new BaseResponse<>
+                (false,
                 code.getReasonHttpStatus().getCode(),
                 code.getReasonHttpStatus().getMessage(),
+                path,
                 null);
     }
-    public static <T> BaseResponse<T> onFailure(String code, String message, T data) {
-        return new BaseResponse<>(false, code, message, data);
+
+    // 예외 응답 (에러 + errorMessage + path)
+    public static <T> BaseResponse<T> onFailure(BaseErrorCode code, String errorMessage, String path) {
+        return new BaseResponse<>
+                (false,
+                        code.getReasonHttpStatus().getCode(),
+                        errorMessage,
+                        path,
+                        null);
     }
 }
 

@@ -24,7 +24,6 @@ import com.podmate.domain.token.dto.TokenResponseDto.AuthenticationResponse;
 @RequestMapping("/api/refresh-token")
 @Validated
 public class TokenRestController {
-    private final JwtUtil jwtUtil;
     private final TokenService tokenService;
     @PostMapping
     public BaseResponse<TokenResponseDto.AuthenticationResponse> refreshToken(
