@@ -1,9 +1,11 @@
 package com.podmate.domain.token.application;
 
+import com.podmate.domain.token.converter.TokenConverter;
 import com.podmate.domain.token.domain.entity.Token;
 import com.podmate.domain.token.domain.repository.TokenRepository;
 import com.podmate.domain.token.dto.TokenResponseDto;
 import com.podmate.domain.token.dto.TokenResponseDto.AuthenticationResponse;
+import com.podmate.domain.token.dto.TokenResponseDto.TokenInfo;
 import com.podmate.domain.token.exception.RefreshTokenNotFoundException;
 import com.podmate.domain.token.exception.TokenUnauthorizedException;
 import com.podmate.global.util.jwt.JwtUtil;
@@ -50,6 +52,15 @@ public class TokenServiceImpl implements TokenService {
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();
+    }
+
+    @Override
+    public TokenInfo getTokenInfo(Long refreshTokenId) {
+
+        Token token = tokenRepository.findById(refreshTokenId)
+                .orElseThrow(() -> new RefreshTokenNotFoundException());
+
+        return TokenConverter.toTokenInfo(token);
     }
 
 }

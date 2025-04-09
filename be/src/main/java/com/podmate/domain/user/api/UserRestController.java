@@ -20,9 +20,9 @@ public class UserRestController {
     private final UserService userService;
     @GetMapping("/me")
     public BaseResponse<UserResponseDto.MyInfo> getMyInfo(@AuthenticationPrincipal CustomOAuth2User customOAuth2User){
-        UserResponseDto.MyInfo myInfo = userService.getMyInfo(customOAuth2User.getUser());
+        UserResponseDto.MyInfo response = userService.getMyInfo(customOAuth2User.getUser());
 
-        return BaseResponse.onSuccess(SuccessStatus._OK, myInfo);
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
 
 }

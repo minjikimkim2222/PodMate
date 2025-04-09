@@ -16,4 +16,11 @@ public class TokenResponseDto {
         private String refreshToken;
 
     }
+
+    @Builder
+    @Getter
+    public static class TokenInfo{
+        private Long userId;
+        private String refreshToken;
+    }
 }

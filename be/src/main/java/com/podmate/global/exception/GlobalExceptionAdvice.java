@@ -4,6 +4,7 @@ import com.podmate.global.common.code.ErrorReasonDTO;
 import com.podmate.global.common.code.status.ErrorStatus;
 import com.podmate.global.common.response.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,33 @@ public class GlobalExceptionAdvice {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    /**
+     * 커스텀 annotation 에러 처리
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<BaseResponse<?>> handleConstraintViolationException(ConstraintViolationException ex,
+                                                                              HttpServletRequest request){
+        String path = request.getRequestURI();
+        String errorMessage = ex.getConstraintViolations().stream()
+                .map(constraintViolation -> constraintViolation.getMessage())
+                .findFirst()
+                .orElseThrow(
+                        () ->
+                                new RuntimeException(
+                                        "ConstraintViolationException 추출 도중 에러 발생")
+                );
+        log.warn("[handleConstraintViolationException] {} | path : {}", errorMessage, path);
+
+        BaseResponse<Object> errorResponse = BaseResponse.onFailure(
+                ErrorStatus._BAD_REQUEST,
+                errorMessage,
+                path
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
 
     /**
      * 그 외 모든 예상 못한 예외 처리
