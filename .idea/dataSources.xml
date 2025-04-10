@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="podmate@localhost" uuid="18d144f7-d320-4fd2-8a71-996eb9fce30f">
+    <data-source source="LOCAL" name="podmate@localhost" uuid="6665b97e-500a-486e-87ff-b64fef6099f8">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
