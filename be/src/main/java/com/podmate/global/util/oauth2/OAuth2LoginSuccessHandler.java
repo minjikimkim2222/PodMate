@@ -62,9 +62,21 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String accessToken = jwtUtil.createAccessToken("accessToken", userId, role, 30 * 60 * 1000L);  // 유효기간 30분
         String refreshToken = jwtUtil.createRefreshToken("refreshToken", userId, 30 * 24 * 60 * 60 * 1000L);    // 유효기간 30일
 
-        // 3. refreshToken을 DB에 저장
-        Token refreshTokenEntity = Token.toEntity(user, refreshToken, LocalDateTime.now().plusDays(30));
-        tokenRepository.save(refreshTokenEntity);
+        // 3. refreshToken을 DB에 저장 -- user1명당, token 1개로 제한해놓아서 업데이트 로직으로 변경
+        Optional<Token> existingToken = tokenRepository.findByUserId(userId);
+
+        if (existingToken.isPresent()){
+            log.info("이미 토큰이 존재합니다. 새로운 토큰으로 업데이트합니다!");
+            Token token = existingToken.get();
+            token.update(refreshToken, LocalDateTime.now().plusDays(30));
+
+            tokenRepository.save(token);
+
+        } else { // 기존 토큰 존재하지 않음
+            Token refreshTokenEntity = Token.toEntity(user, refreshToken, LocalDateTime.now().plusDays(30));
+            tokenRepository.save(refreshTokenEntity);
+        }
+
 
         // 4. JSON 응답으로, accessToken과 refreshToken 을 반환해준다.
         response.setContentType("application/json");
