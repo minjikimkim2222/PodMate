@@ -11,4 +11,6 @@ public interface UserService {
     UserResponseDto.AddressInfo updateAddress(Long userId, AddressRequestDto.UserAddressUpdateRequest addressUpdateRequest);
 
     UserResponseDto.AccountInfo updateAccount(Long userId, UserRequestDto.AccountRequestDto requestDto);
+
+    void logout(Long userId);
 }
