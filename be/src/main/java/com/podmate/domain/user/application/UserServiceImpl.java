@@ -1,0 +1,60 @@
+package com.podmate.domain.user.application;
+
+import com.podmate.domain.address.domain.entity.Address;
+import com.podmate.domain.address.domain.repository.AddressRepository;
+import com.podmate.domain.address.dto.AddressRequestDto.UserAddressUpdateRequest;
+import com.podmate.domain.token.domain.entity.Token;
+import com.podmate.domain.token.domain.repository.TokenRepository;
+import com.podmate.domain.token.exception.RefreshTokenNotFoundException;
+import com.podmate.domain.user.converter.UserConverter;
+import com.podmate.domain.user.domain.entity.User;
+import com.podmate.domain.user.domain.repository.UserRepository;
+import com.podmate.domain.user.dto.UserRequestDto.AccountRequestDto;
+import com.podmate.domain.user.dto.UserResponseDto;
+import com.podmate.domain.user.dto.UserResponseDto.AccountInfo;
+import com.podmate.domain.user.dto.UserResponseDto.AddressInfo;
+import com.podmate.domain.user.exception.UserNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
+    private final TokenRepository tokenRepository;
+    @Override
+    public UserResponseDto.MyInfo getMyInfo(User user) {
+        return UserConverter.toMyInfo(user);
+    }
+
+    @Override
+    public UserResponseDto.AddressInfo updateAddress(Long userId, UserAddressUpdateRequest addressUpdateRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        Address address = user.updateAddress(addressUpdateRequest, addressRepository);
+
+        return new UserResponseDto.AddressInfo(user.getId(), address.getId());
+    }
+
+    @Override
+    public UserResponseDto.AccountInfo updateAccount(Long userId, AccountRequestDto requestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        user.updateAccount(requestDto.getAccount());
+
+        return new UserResponseDto.AccountInfo(user.getId(), user.getAccount());
+    }
+
+    @Override
+    public void logout(Long userId) {
+        Token token = tokenRepository.findByUserId(userId)
+                .orElseThrow(() -> new RefreshTokenNotFoundException());
+        tokenRepository.delete(token);
+    }
+
+}
