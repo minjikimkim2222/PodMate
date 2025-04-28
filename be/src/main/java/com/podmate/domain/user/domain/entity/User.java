@@ -117,5 +117,10 @@ public class User extends BaseEntity {
         this.address = address;
         return this.address;
     }
+
+    public String updateAccount(String account){
+        this.account = account;
+        return this.account;
+    }
 }
 

@@ -22,4 +22,11 @@ public class UserResponseDto {
         private Long userId;
         private Long addressId;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class AccountInfo {
+        private Long userId;
+        private String account;
+    }
 }
