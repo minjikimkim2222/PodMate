@@ -14,4 +14,12 @@ public class UserResponseDto {
         private Long userId;
         private String role;
     }
+
+
+    @Getter
+    @AllArgsConstructor
+    public static class AddressInfo {
+        private Long userId;
+        private Long addressId;
+    }
 }

@@ -1,6 +1,8 @@
 package com.podmate.domain.user.domain.entity;
 
 import com.podmate.domain.address.domain.entity.Address;
+import com.podmate.domain.address.domain.repository.AddressRepository;
+import com.podmate.domain.address.dto.AddressRequestDto;
 import com.podmate.domain.model.entity.BaseEntity;
 import com.podmate.domain.user.domain.enums.Role;
 import com.podmate.domain.user.domain.enums.SocialType;
@@ -102,6 +104,18 @@ public class User extends BaseEntity {
     // User 도메인 관련 비즈니스 로직 (예: 닉네임 변경)
     public void updateNickname(String nickname){
         this.nickname = nickname;
+    }
+
+    public Address updateAddress(AddressRequestDto.UserAddressUpdateRequest addressUpdateRequest,
+                              AddressRepository addressRepository){
+        Address address = Address.builder()
+                .roadAddress(addressUpdateRequest.getRoadAddress())
+                .latitude(addressUpdateRequest.getLatitude())
+                .longitude(addressUpdateRequest.getLongitude())
+                .build();
+        addressRepository.save(address);
+        this.address = address;
+        return this.address;
     }
 }
 
