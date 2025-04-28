@@ -2,7 +2,9 @@ package com.podmate.domain.user.api;
 
 import com.podmate.domain.address.dto.AddressRequestDto;
 import com.podmate.domain.user.application.UserService;
+import com.podmate.domain.user.dto.UserRequestDto;
 import com.podmate.domain.user.dto.UserResponseDto;
+import com.podmate.domain.user.dto.UserResponseDto.AccountInfo;
 import com.podmate.domain.user.dto.UserResponseDto.AddressInfo;
 import com.podmate.global.common.code.status.SuccessStatus;
 import com.podmate.global.common.response.BaseResponse;
@@ -39,4 +41,13 @@ public class UserRestController {
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
 
+    @PutMapping("/me/account")
+    public BaseResponse<UserResponseDto.AccountInfo> updateAccount(
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            @RequestBody UserRequestDto.AccountRequestDto accountRequestDto
+            ){
+        UserResponseDto.AccountInfo response = userService.updateAccount(customOAuth2User.getUserId(), accountRequestDto);
+
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
+    }
 }

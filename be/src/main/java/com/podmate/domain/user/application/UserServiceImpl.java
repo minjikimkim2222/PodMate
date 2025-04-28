@@ -6,7 +6,9 @@ import com.podmate.domain.address.dto.AddressRequestDto.UserAddressUpdateRequest
 import com.podmate.domain.user.converter.UserConverter;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
+import com.podmate.domain.user.dto.UserRequestDto.AccountRequestDto;
 import com.podmate.domain.user.dto.UserResponseDto;
+import com.podmate.domain.user.dto.UserResponseDto.AccountInfo;
 import com.podmate.domain.user.dto.UserResponseDto.AddressInfo;
 import com.podmate.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +27,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AddressInfo updateAddress(Long userId, UserAddressUpdateRequest addressUpdateRequest) {
+    public UserResponseDto.AddressInfo updateAddress(Long userId, UserAddressUpdateRequest addressUpdateRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
 
         Address address = user.updateAddress(addressUpdateRequest, addressRepository);
 
         return new UserResponseDto.AddressInfo(user.getId(), address.getId());
+    }
+
+    @Override
+    public UserResponseDto.AccountInfo updateAccount(Long userId, AccountRequestDto requestDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        user.updateAccount(requestDto.getAccount());
+
+        return new UserResponseDto.AccountInfo(user.getId(), user.getAccount());
     }
 
 }
