@@ -18,7 +18,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // --- Token ---
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "TOKEN_404", "리프레시 토큰을 찾을 수 없습니다."),
-    TOKEN_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "TOKEN_401", "토큰 인증 실패입니다."),
+    TOKEN_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "TOKEN_401", "리프레시 토큰 인증 실패입니다."),
 
     // --- USER ---
     NO_SUCH_MEMBER(HttpStatus.BAD_REQUEST, "USER_404","멤버가 존재하지 않습니다.")

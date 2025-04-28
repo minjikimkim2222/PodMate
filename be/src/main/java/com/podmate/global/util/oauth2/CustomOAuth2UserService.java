@@ -46,13 +46,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // DB에 유저 없으면 - 회원가입
         if (foundUser.isEmpty()){
 
-            User user = User.builder()
-                    .email(oAuth2Response.getEmail())
-                    .nickname(oAuth2Response.getNickName())
-                    .profileImage(oAuth2Response.getProfileImage())
-                    .socialType(SocialType.KAKAO)
-                    .role(Role.USER) // 일반 유저 설정
-                    .build();
+//            User user = User.builder()
+//                    .email(oAuth2Response.getEmail())
+//                    .nickname(oAuth2Response.getNickName())
+//                    .profileImage(oAuth2Response.getProfileImage())
+//                    .socialType(SocialType.KAKAO)
+//                    .role(Role.USER) // 일반 유저 설정
+//                    .build();
+
+            User user = User.createFirstLoginUser(oAuth2Response.getNickName(), oAuth2Response.getEmail(),
+                    oAuth2Response.getProfileImage(),
+                    SocialType.KAKAO, Role.USER);
 
             userRepository.save(user);
 
