@@ -13,4 +13,6 @@ public interface UserService {
     UserResponseDto.AccountInfo updateAccount(Long userId, UserRequestDto.AccountRequestDto requestDto);
 
     void logout(Long userId);
+
+    UserResponseDto.OtherUserProfileInfo getOtherUserProfile(Long userId);
 }
