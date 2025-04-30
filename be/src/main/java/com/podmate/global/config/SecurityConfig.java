@@ -53,7 +53,8 @@ public class SecurityConfig {
                                 "/login/oauth2/code/**", // 카카오 인증 콜백
                                 "/api/refresh-token", // refresh token (토큰 갱신)
                                 "/api/refresh-token/{refreshtoken-id}", // validator, annotation 테스트용 api
-                                "/api/auth/test-token"
+                                "/api/auth/test-token",
+                                "/api/users/{userId}/profile"
                                 )
                         .permitAll()
                         .anyRequest().authenticated() // 그외 요청은 허가된 사람만 인가

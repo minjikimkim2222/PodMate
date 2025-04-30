@@ -6,6 +6,7 @@ import com.podmate.domain.user.dto.UserRequestDto;
 import com.podmate.domain.user.dto.UserResponseDto;
 import com.podmate.domain.user.dto.UserResponseDto.AccountInfo;
 import com.podmate.domain.user.dto.UserResponseDto.AddressInfo;
+import com.podmate.domain.user.dto.UserResponseDto.OtherUserProfileInfo;
 import com.podmate.global.common.code.status.SuccessStatus;
 import com.podmate.global.common.response.BaseResponse;
 import com.podmate.global.util.oauth2.dto.CustomOAuth2User;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,5 +59,14 @@ public class UserRestController {
         userService.logout(customOAuth2User.getUserId());
 
         return BaseResponse.onSuccess(SuccessStatus._OK, "logout success!");
+    }
+
+    @GetMapping("/{userId}/profile")
+    public BaseResponse<UserResponseDto.OtherUserProfileInfo> getOtherUserProfile(
+            @PathVariable Long userId
+    ){
+        UserResponseDto.OtherUserProfileInfo response = userService.getOtherUserProfile(userId);
+
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
 }
