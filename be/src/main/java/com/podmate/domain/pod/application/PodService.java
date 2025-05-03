@@ -1,16 +1,19 @@
 package com.podmate.domain.pod.application;
 
+import com.podmate.domain.address.domain.entity.Address;
+import com.podmate.domain.address.domain.repository.AddressRepository;
+import com.podmate.domain.address.exception.AddressNotFoundException;
 import com.podmate.domain.jjim.domain.entity.JJim;
 import com.podmate.domain.jjim.domain.repository.JJimRepository;
 import com.podmate.domain.pod.domain.entity.Pod;
-import com.podmate.domain.pod.domain.enums.PodStatus;
-import com.podmate.domain.pod.domain.enums.PodType;
-import com.podmate.domain.pod.domain.enums.SortBy;
+import com.podmate.domain.pod.domain.enums.*;
 import com.podmate.domain.pod.domain.repository.PodRepository;
+import com.podmate.domain.pod.dto.PodRequestDto;
 import com.podmate.domain.pod.dto.PodResponse;
 import com.podmate.domain.pod.dto.PodResponseDto;
 import com.podmate.domain.pod.exception.PodNotFoundException;
 import com.podmate.domain.podUserMapping.domain.entity.PodUserMapping;
+import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
 import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.podUserMapping.domain.repository.PodUserMappingRepository;
 import com.podmate.domain.podUserMapping.exception.PodUserMappingNotFoundException;
@@ -20,7 +23,6 @@ import com.podmate.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +38,7 @@ public class PodService {
     private final PodRepository podRepository;
     private final JJimRepository jjimRepository;
     private final PodUserMappingRepository podUserMappingRepository;
+    private final AddressRepository addressRepository;
 
     private static final int EARTH_RADIUS_KM = 6371; // 지구 반지름 (단위: km)
 
@@ -214,4 +217,57 @@ public class PodService {
         }
         return null;
     }
+
+    public Long createMinimum(PodRequestDto.MininumRequestDto request, Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        Address address = addressRepository.findById(request.getAddressId())
+                .orElseThrow(() -> new AddressNotFoundException());
+
+        Platform platform = Platform.fromDisplayName(request.getPlatform()); // String -> Enum
+
+        Pod pod = Pod.createMinimumPod(request.getPodName(), platform, request.getDeadline(),
+                                        request.getGoalAmount(), request.getDescription(), address);
+
+        Pod savedPod = podRepository.save(pod);
+
+        // 팟 생성자 → podUserMapping에 leader로 추가
+        PodUserMapping mapping = PodUserMapping.builder()
+                .pod(savedPod)
+                .user(user)
+                .isApproved(IsApproved.ACCEPTED)
+                .podRole(PodRole.POD_LEADER)
+                .build();
+
+        podUserMappingRepository.save(mapping);
+
+        return savedPod.getId();
+    }
+
+    public Long createGroupBuy(PodRequestDto.GroupBuyRequestDto request, Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        Address address = addressRepository.findById(request.getAddressId())
+                .orElseThrow(() -> new AddressNotFoundException());
+
+        Pod pod = Pod.createGroupBuyPod(request.getPodName(), request.getDeadline(), request.getGoalAmount(), request.getDescription(),
+                                        address, request.getItemUrl(), request.getUnitQuantity(), request.getUnitPrice());
+
+        Pod savedPod = podRepository.save(pod);
+
+        // 팟 생성자 → podUserMapping에 leader로 추가
+        PodUserMapping mapping = PodUserMapping.builder()
+                .pod(savedPod)
+                .user(user)
+                .isApproved(IsApproved.ACCEPTED)
+                .podRole(PodRole.POD_LEADER)
+                .build();
+
+        podUserMappingRepository.save(mapping);
+
+        return savedPod.getId();
+    }
+
 }

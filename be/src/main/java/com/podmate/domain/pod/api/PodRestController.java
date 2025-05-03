@@ -2,7 +2,9 @@ package com.podmate.domain.pod.api;
 
 import com.podmate.domain.pod.application.PodService;
 import com.podmate.domain.pod.domain.enums.SortBy;
+import com.podmate.domain.pod.dto.PodRequestDto;
 import com.podmate.domain.pod.dto.PodResponse;
+import com.podmate.domain.pod.dto.PodResponseDto;
 import com.podmate.global.common.code.status.SuccessStatus;
 import com.podmate.global.common.response.BaseResponse;
 import com.podmate.global.util.oauth2.dto.CustomOAuth2User;
@@ -35,5 +37,21 @@ public class PodRestController {
         Long userId = customOAuth2User.getUserId();
         PodResponse response = podService.getPodDetail(userId, podId);
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
+    }
+
+    //최소주문 팟 생성하기
+    @PostMapping("/minimum-order")
+    public BaseResponse<Long> createMinimumPod(@RequestBody PodRequestDto.MininumRequestDto request, @AuthenticationPrincipal CustomOAuth2User customOAuth2User){
+
+        Long podId = podService.createMinimum(request, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, podId);
+    }
+
+    //공동주문 팟 생성하기
+    @PostMapping("/group-buy")
+    public BaseResponse<Long> createGroupBuyPod(@RequestBody PodRequestDto.GroupBuyRequestDto request, @AuthenticationPrincipal CustomOAuth2User customOAuth2User){
+
+        Long podId = podService.createGroupBuy(request, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, podId);
     }
 }

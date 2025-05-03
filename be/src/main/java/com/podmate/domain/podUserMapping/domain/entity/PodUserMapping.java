@@ -1,14 +1,22 @@
 package com.podmate.domain.podUserMapping.domain.entity;
 
+import com.podmate.domain.address.domain.entity.Address;
 import com.podmate.domain.model.entity.BaseEntity;
 import com.podmate.domain.pod.domain.entity.Pod;
+import com.podmate.domain.pod.domain.enums.InprogressStatus;
+import com.podmate.domain.pod.domain.enums.Platform;
+import com.podmate.domain.pod.domain.enums.PodStatus;
+import com.podmate.domain.pod.domain.enums.PodType;
 import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
 import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -37,5 +45,13 @@ public class PodUserMapping extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PodRole podRole;
+
+    @Builder
+    private PodUserMapping(Pod pod, User user, IsApproved isApproved, PodRole podRole) {
+        this.pod = pod;
+        this.user = user;
+        this.isApproved = isApproved;
+        this.podRole = podRole;
+    }
 
 }

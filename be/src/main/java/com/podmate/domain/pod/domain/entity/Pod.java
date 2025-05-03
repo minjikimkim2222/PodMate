@@ -92,7 +92,7 @@ public class Pod extends BaseEntity {
                 .podName(name)
                 .podType(PodType.MINIMUM)
                 .podStatus(PodStatus.IN_PROGRESS)
-                .inprogressStatus(InprogressStatus.PENDING_ACCEPTANCE)
+                .inprogressStatus(InprogressStatus.RECRUITING)
                 .deadline(deadline)
                 .platform(platform)
                 .currentAmount(0)
@@ -102,12 +102,12 @@ public class Pod extends BaseEntity {
                 .build();
     }
 
-    public static Pod createGroupBuyPod(String name, LocalDate deadline, int goalAmount, String description, Address address,String itemUrl, int unitQuantity, int unitPrice) {
+    public static Pod createGroupBuyPod(String name, LocalDate deadline, int goalAmount, String description, Address address, String itemUrl, int unitQuantity, int unitPrice) {
         return Pod.builder()
                 .podName(name)
                 .podType(PodType.GROUP_BUY)
                 .podStatus(PodStatus.IN_PROGRESS)
-                .inprogressStatus(InprogressStatus.PENDING_ACCEPTANCE)
+                .inprogressStatus(InprogressStatus.RECRUITING)
                 .deadline(deadline)
                 .currentAmount(0)
                 .goalAmount(goalAmount)
@@ -116,6 +116,7 @@ public class Pod extends BaseEntity {
                 .itemUrl(itemUrl)
                 .unitQuantity(unitQuantity)
                 .unitPrice(unitPrice)
+                .platform(Platform.UNKNOWN)
                 .build();
     }
 }
