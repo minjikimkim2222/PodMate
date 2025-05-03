@@ -46,7 +46,6 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email; // 카카오 이메일
 
-
     @Column(name = "profile_image", nullable = false)
     private String profileImage;
 

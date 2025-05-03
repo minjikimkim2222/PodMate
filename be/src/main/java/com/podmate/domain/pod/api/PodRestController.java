@@ -1,0 +1,39 @@
+package com.podmate.domain.pod.api;
+
+import com.podmate.domain.pod.application.PodService;
+import com.podmate.domain.pod.domain.enums.SortBy;
+import com.podmate.domain.pod.dto.PodResponse;
+import com.podmate.global.common.code.status.SuccessStatus;
+import com.podmate.global.common.response.BaseResponse;
+import com.podmate.global.util.oauth2.dto.CustomOAuth2User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/pods")
+public class PodRestController {
+
+    private final PodService podService;
+
+    //팟 리스트 조회
+    @GetMapping
+    public BaseResponse<List<PodResponse>> getPodList(@AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+                                                      @RequestParam(value = "sortBy", required = false) SortBy sortBy,
+                                                      @RequestParam(value = "platform", required = false) List<String> platforms,
+                                                      @RequestParam(value = "podType", required = false) String podType) {
+        List<PodResponse> podList = podService.getPodList(customOAuth2User.getUserId(), sortBy, platforms, podType);
+        return BaseResponse.onSuccess(SuccessStatus._OK, podList);
+    }
+
+    //팟 상세보기 조회
+    @GetMapping("/{podId}")
+    public BaseResponse<PodResponse> getPodDetailList(@PathVariable Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        Long userId = customOAuth2User.getUserId();
+        PodResponse response = podService.getPodDetail(userId, podId);
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
+    }
+}
