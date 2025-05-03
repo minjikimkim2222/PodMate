@@ -21,10 +21,13 @@ public enum ErrorStatus implements BaseErrorCode {
     TOKEN_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "TOKEN_401", "리프레시 토큰 인증 실패입니다."),
 
     // --- USER ---
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_404", "유저를 찾을 수 없습니다.")
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_404", "유저를 찾을 수 없습니다."),
 
+    // --- POD ---
+    POD_NOT_FOUND(HttpStatus.NOT_FOUND, "POD_404", "팟을 찾을 수 없습니다."),
 
-
+    // --- PODUSERMAPPING ---
+    PODUSERMAPPING_NOT_FOUND(HttpStatus.NOT_FOUND, "PODUSERMAPPING_404", "팟ID에 맞는 유저를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
