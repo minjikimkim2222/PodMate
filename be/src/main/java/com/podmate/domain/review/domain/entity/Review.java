@@ -1,7 +1,7 @@
 package com.podmate.domain.review.domain.entity;
 
 import com.podmate.domain.model.entity.BaseEntity;
-import com.podmate.domain.pod.entity.Pod;
+import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.user.domain.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -27,8 +27,11 @@ public enum ErrorStatus implements BaseErrorCode {
     POD_NOT_FOUND(HttpStatus.NOT_FOUND, "POD_404", "팟을 찾을 수 없습니다."),
 
     // --- PODUSERMAPPING ---
-    PODUSERMAPPING_NOT_FOUND(HttpStatus.NOT_FOUND, "PODUSERMAPPING_404", "팟ID에 맞는 유저를 찾을 수 없습니다.")
-    ;
+    PODUSERMAPPING_NOT_FOUND(HttpStatus.NOT_FOUND, "PODUSERMAPPING_404", "팟ID에 맞는 유저를 찾을 수 없습니다."),
+
+    // --- ADDRESS ---
+    ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "ADDRESS_404", "주소를 찾을 수 없습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
