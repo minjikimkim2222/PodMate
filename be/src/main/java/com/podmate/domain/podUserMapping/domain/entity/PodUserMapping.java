@@ -6,12 +6,14 @@ import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
 import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.user.domain.entity.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "pod_user_mapping")
 public class PodUserMapping extends BaseEntity {
 
     @Id

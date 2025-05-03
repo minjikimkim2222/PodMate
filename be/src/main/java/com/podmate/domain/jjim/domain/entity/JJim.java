@@ -4,12 +4,14 @@ import com.podmate.domain.model.entity.BaseEntity;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.user.domain.entity.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "jjim")
 public class JJim extends BaseEntity {
 
     @Id

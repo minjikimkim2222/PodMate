@@ -7,6 +7,7 @@ import com.podmate.domain.pod.domain.enums.Platform;
 import com.podmate.domain.pod.domain.enums.PodStatus;
 import com.podmate.domain.pod.domain.enums.PodType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "pod")
 @Getter
 public class Pod extends BaseEntity {

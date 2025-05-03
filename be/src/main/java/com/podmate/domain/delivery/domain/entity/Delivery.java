@@ -4,6 +4,7 @@ import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.model.entity.BaseEntity;
 import com.podmate.domain.pod.domain.entity.Pod;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +12,8 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "delivery")
 public class Delivery extends BaseEntity {
 
     @Id
