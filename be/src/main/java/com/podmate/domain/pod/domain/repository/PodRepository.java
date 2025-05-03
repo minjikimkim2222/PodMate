@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface PodRepository extends JpaRepository<Pod, Long> {
     List<Pod> findByPodStatus(PodStatus status);
+
+    List<Pod> findAllByIdIn(List<Long> podIds);
+
 }

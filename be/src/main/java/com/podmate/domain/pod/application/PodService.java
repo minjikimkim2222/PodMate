@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.podmate.domain.pod.converter.PodConverter.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -134,30 +136,6 @@ public class PodService {
         return null;  // PodType이 두 가지 외에는 처리되지 않음
     }
 
-    private PodResponseDto.Minimum buildMinimumPodResponseDto(Pod pod, boolean isJJim) {
-        return PodResponseDto.Minimum.builder()
-                .podId(pod.getId())
-                .podName(pod.getPodName())
-                .podType(pod.getPodType().name())
-                .platform(pod.getPlatform().name())
-                .goalAmount(pod.getGoalAmount())
-                .currentAmount(pod.getCurrentAmount())
-                .isJJim(isJJim)
-                .build();
-    }
-
-    private PodResponseDto.GroupBuy buildGroupBuyPodResponseDto(Pod pod, boolean isJJim) {
-        return PodResponseDto.GroupBuy.builder()
-                .podId(pod.getId())
-                .podName(pod.getPodName())
-                .podType(pod.getPodType().name())
-                .itemUrl(pod.getItemUrl())
-                .goalAmount(pod.getGoalAmount())
-                .currentAmount(pod.getCurrentAmount())
-                .isJJim(isJJim)
-                .build();
-    }
-
     //사용자 주변 팟 거리 계산 메서드
     private double calculateDistance(double lat1, double lon1, Pod pod) {
         double lat2 = pod.getAddress().getLatitude();
@@ -191,29 +169,9 @@ public class PodService {
         );
 
         if (pod.getPodType() == PodType.MINIMUM){
-            return PodResponseDto.MinimumDetail.builder()
-                    .podId(pod.getId())
-                    .podName(pod.getPodName())
-                    .podType(pod.getPodType().toString())
-                    .platform(pod.getPlatform().toString())
-                    .goalAmount(pod.getGoalAmount())
-                    .currentAmount(pod.getCurrentAmount())
-                    .isJJim(isJJim)
-                    .podLeader(podLeaderDto)
-                    .build();
+            return buildMinimumDetailResponseDto(pod, isJJim, podLeaderDto);
         } else if (pod.getPodType() == PodType.GROUP_BUY){
-            return PodResponseDto.GroupBuyDetail.builder()
-                    .podId(pod.getId())
-                    .podName(pod.getPodName())
-                    .podType(pod.getPodType().toString())
-                    .itemUrl(pod.getItemUrl())
-                    .goalAmount(pod.getGoalAmount())
-                    .currentAmount(pod.getCurrentAmount())
-                    .isJJim(isJJim)
-                    .unitQuantity(pod.getUnitQuantity())
-                    .unitPrice(pod.getUnitPrice())
-                    .podLeader(podLeaderDto)
-                    .build();
+            return buildGroupBuyDetailResponseDto(pod, isJJim, podLeaderDto);
         }
         return null;
     }
