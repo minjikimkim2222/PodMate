@@ -2,6 +2,8 @@ package com.podmate.domain.pod.converter;
 
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.dto.PodResponseDto;
+import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
+import com.podmate.domain.user.domain.entity.User;
 
 public class PodConverter {
     public static PodResponseDto.Minimum buildMinimumPodResponseDto(Pod pod, boolean isJJim) {
@@ -76,6 +78,27 @@ public class PodConverter {
                 .itemUrl(pod.getItemUrl())
                 .goalAmount(pod.getGoalAmount())
                 .currentAmount(pod.getCurrentAmount())
+                .build();
+    }
+
+    public static PodResponseDto.MinimumPodMember buildMinimumPodMemberResponseDto(User member, IsApproved isApproved) {
+        return PodResponseDto.MinimumPodMember.builder()
+                .userId(member.getId())
+                .nickname(member.getNickname())
+                .profileImageUrl(member.getProfileImage())
+                //.totalAmount()  <-- orderForm의 총 주문 금액
+                .mannerScore(member.getMannerScore())
+                .isApproved(isApproved.name())
+                .build();
+    }
+
+    public static PodResponseDto.PodMember buildPodMemberResponseDto(User member, IsApproved isApproved) {
+        return PodResponseDto.PodMember.builder()
+                .userId(member.getId())
+                .nickname(member.getNickname())
+                .profileImageUrl(member.getProfileImage())
+                .mannerScore(member.getMannerScore())
+                .isApproved(isApproved.name())
                 .build();
     }
 
