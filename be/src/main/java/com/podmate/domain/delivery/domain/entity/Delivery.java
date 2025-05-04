@@ -1,10 +1,15 @@
 package com.podmate.domain.delivery.domain.entity;
 
+import com.podmate.domain.address.domain.entity.Address;
 import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.model.entity.BaseEntity;
 import com.podmate.domain.pod.domain.entity.Pod;
+import com.podmate.domain.user.domain.enums.Role;
+import com.podmate.domain.user.domain.enums.SocialType;
+import com.podmate.domain.user.domain.enums.Status;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,4 +39,13 @@ public class Delivery extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus;  //배송 상태
+
+    @Builder
+    public Delivery(Pod pod, String tackingNum, String courierCompany, LocalDate pickupDeadline, DeliveryStatus deliveryStatus) {
+        this.pod = pod;
+        this.tackingNum = tackingNum;
+        this.courierCompany = courierCompany;
+        this.pickupDeadline = pickupDeadline;
+        this.deliveryStatus = deliveryStatus;
+    }
 }

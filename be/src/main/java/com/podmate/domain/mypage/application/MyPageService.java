@@ -1,5 +1,9 @@
 package com.podmate.domain.mypage.application;
 
+import com.podmate.domain.delivery.domain.entity.Delivery;
+import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
+import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
+import com.podmate.domain.mypage.dto.MyPageRequestDto;
 import com.podmate.domain.pod.converter.PodConverter;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.enums.PodType;
@@ -21,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +43,7 @@ public class MyPageService {
     private final UserRepository userRepository;
     private final PodUserMappingRepository podUserMappingRepository;
     private final PodRepository podRepository;
+    private final DeliveryRepository deliveryRepository;
 
     public List<PodResponse> getInprogressMyPods(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
@@ -97,8 +103,21 @@ public class MyPageService {
         }else {
             throw new PodTypeNotFoundException();
         }
+    }
 
+    public void addTrackingNum(MyPageRequestDto request, Long podId, Long userId){
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        Pod pod = podRepository.findById(podId).orElseThrow(() -> new PodNotFoundException());
 
+        Delivery delivery = Delivery.builder()
+                .pod(pod)
+                .tackingNum(request.getTrackingNum())
+                .courierCompany(request.getCourierCompany())
+                .pickupDeadline(LocalDate.now().plusDays(5)) //오늘로부터 5일 뒤
+                .deliveryStatus(DeliveryStatus.SHIPPING)
+                .build();
+
+        deliveryRepository.save(delivery);
     }
 
 }

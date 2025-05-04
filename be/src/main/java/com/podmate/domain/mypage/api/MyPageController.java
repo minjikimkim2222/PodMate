@@ -1,6 +1,7 @@
 package com.podmate.domain.mypage.api;
 
 import com.podmate.domain.mypage.application.MyPageService;
+import com.podmate.domain.mypage.dto.MyPageRequestDto;
 import com.podmate.domain.pod.dto.PodResponse;
 import com.podmate.domain.pod.dto.PodResponseDto;
 import com.podmate.domain.user.domain.entity.User;
@@ -9,10 +10,7 @@ import com.podmate.global.common.response.BaseResponse;
 import com.podmate.global.util.oauth2.dto.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,6 +33,13 @@ public class MyPageController {
     public BaseResponse<PodResponse> getInprogressMyPodMembers(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         PodResponse inprogressMembers = myPageService.getInprogressMembers(podId, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, inprogressMembers);
+    }
+
+    //운송장 입력
+    @PostMapping("/inprogress/mypods/{podId}")
+    public BaseResponse<String> addTrackingNumber(@RequestBody MyPageRequestDto request, @PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        myPageService.addTrackingNum(request, podId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, "successfully saved tracking number!");
     }
 
 }
