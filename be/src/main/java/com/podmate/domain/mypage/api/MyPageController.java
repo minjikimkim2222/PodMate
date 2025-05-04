@@ -28,7 +28,7 @@ public class MyPageController {
         return BaseResponse.onSuccess(SuccessStatus._OK, inprogressMyPods);
     }
 
-    //나의 팟의 참여중인 팟원 리스트 조회
+    //진행중인 나의 팟에 참여중인 팟원 리스트 조회
     @GetMapping("/inprogress/mypods/{podId}/podmembers")
     public BaseResponse<PodResponse> getInprogressMyPodMembers(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         PodResponse inprogressMembers = myPageService.getInprogressMembers(podId, customOAuth2User.getUserId());
@@ -49,4 +49,10 @@ public class MyPageController {
         return BaseResponse.onSuccess(SuccessStatus._OK, completedMyPods);
     }
 
+    //완료된 나의 팟에 참여중인 팟원 리스트 조회
+    @GetMapping("/completed/mypods/{podId}/podmembers")
+    public BaseResponse<PodResponse> getcompletedMyPodMembers(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        PodResponse completedMembers = myPageService.getCompletedMembers(podId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, completedMembers);
+    }
 }
