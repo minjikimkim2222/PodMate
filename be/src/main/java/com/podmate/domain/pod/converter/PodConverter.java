@@ -16,8 +16,8 @@ public class PodConverter {
                     .build();
     }
 
-    public static PodResponseDto.Minimum buildMinimumDetailResponseDto(Pod pod, boolean isJJim, PodResponseDto.PodLeader podLeaderDto) {
-        return PodResponseDto.Minimum.builder()
+    public static PodResponseDto.MinimumDetail buildMinimumDetailResponseDto(Pod pod, boolean isJJim, PodResponseDto.PodLeader podLeaderDto) {
+        return PodResponseDto.MinimumDetail.builder()
                 .podId(pod.getId())
                 .podName(pod.getPodName())
                 .podType(pod.getPodType().name())
@@ -29,8 +29,8 @@ public class PodConverter {
                 .build();
     }
 
-    public static PodResponseDto.Minimum buildMinimumStatusResponseDto(Pod pod) {
-        return PodResponseDto.Minimum.builder()
+    public static PodResponseDto.MinimumStatus buildMinimumStatusResponseDto(Pod pod) {
+        return PodResponseDto.MinimumStatus.builder()
                 .podId(pod.getId())
                 .podName(pod.getPodName())
                 .podType(pod.getPodType().name())
@@ -53,8 +53,8 @@ public class PodConverter {
                 .build();
     }
 
-    public static PodResponseDto.GroupBuy buildGroupBuyDetailResponseDto(Pod pod, boolean isJJim, PodResponseDto.PodLeader podLeaderDto) {
-        return PodResponseDto.GroupBuy.builder()
+    public static PodResponseDto.GroupBuyDetail buildGroupBuyDetailResponseDto(Pod pod, boolean isJJim, PodResponseDto.PodLeader podLeaderDto) {
+        return PodResponseDto.GroupBuyDetail.builder()
                 .podId(pod.getId())
                 .podName(pod.getPodName())
                 .podType(pod.getPodType().toString())
@@ -67,8 +67,8 @@ public class PodConverter {
                 .podLeader(podLeaderDto)
                 .build();
     }
-    public static PodResponseDto.GroupBuy buildGroupBuyStatusResponseDto(Pod pod) {
-        return PodResponseDto.GroupBuy.builder()
+    public static PodResponseDto.GroupBuyStaus buildGroupBuyStatusResponseDto(Pod pod) {
+        return PodResponseDto.GroupBuyStaus.builder()
                 .podId(pod.getId())
                 .podName(pod.getPodName())
                 .podType(pod.getPodType().name())
@@ -79,14 +79,4 @@ public class PodConverter {
                 .build();
     }
 
-    public static PodResponseDto.GroupBuy buildGroupBuyDetailResponseDto(Pod pod) {
-        return PodResponseDto.GroupBuy.builder()
-                .podId(pod.getId())
-                .podName(pod.getPodName())
-                .podType(pod.getPodType().name())
-                .itemUrl(pod.getItemUrl())
-                .goalAmount(pod.getGoalAmount())
-                .currentAmount(pod.getCurrentAmount())
-                .build();
-    }
 }

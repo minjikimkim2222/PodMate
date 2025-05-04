@@ -22,7 +22,33 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private int currentAmount;  //현재 금액 or 현재 인원
         private boolean isJJim;
         private PodLeader podLeader;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class MinimumDetail implements PodResponse{
+        private Long podId;
+        private String podName;
+        private String podType;
+        private String platform;
+        private int goalAmount;     //목표 금액 or 목표 인원
+        private int currentAmount;  //현재 금액 or 현재 인원
+        private boolean isJJim;
+        private PodLeader podLeader;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class MinimumStatus implements PodResponse{
+        private Long podId;
+        private String podName;
+        private String podType;
         private String podStatus;
+        private String platform;
+        private int goalAmount;
+        private int currentAmount;
     }
 
     @Builder
@@ -36,9 +62,32 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private int goalAmount;     //목표 금액 or 목표 인원
         private int currentAmount;  //현재 금액 or 현재 인원
         private boolean isJJim;
+    }
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class GroupBuyDetail implements PodResponse{
+        private Long podId;
+        private String podName;
+        private String podType;
+        private String itemUrl;
+        private int goalAmount;     //목표 금액 or 목표 인원
+        private int currentAmount;  //현재 금액 or 현재 인원
+        private boolean isJJim;
         private int unitQuantity;
         private int unitPrice;
         private PodLeader podLeader;
+    }
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class GroupBuyStaus implements PodResponse{
+        private Long podId;
+        private String podName;
+        private String podType;
+        private String itemUrl;
+        private int goalAmount;     //목표 금액 or 목표 인원
+        private int currentAmount;  //현재 금액 or 현재 인원
         private String podStatus;
     }
 
