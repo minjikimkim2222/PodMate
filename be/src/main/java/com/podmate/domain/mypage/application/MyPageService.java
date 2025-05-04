@@ -6,8 +6,14 @@ import com.podmate.domain.pod.domain.enums.PodType;
 import com.podmate.domain.pod.domain.repository.PodRepository;
 import com.podmate.domain.pod.dto.PodResponse;
 import com.podmate.domain.pod.dto.PodResponseDto;
+import com.podmate.domain.pod.exception.PodNotFoundException;
+import com.podmate.domain.pod.exception.PodTypeNotFoundException;
+import com.podmate.domain.podUserMapping.domain.entity.PodUserMapping;
 import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.podUserMapping.domain.repository.PodUserMappingRepository;
+import com.podmate.domain.podUserMapping.exception.PodLeaderNotFoundException;
+import com.podmate.domain.podUserMapping.exception.PodLeaderUserMismatchException;
+import com.podmate.domain.podUserMapping.exception.PodUserMappingNotFoundException;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
 import com.podmate.domain.user.exception.UserNotFoundException;
@@ -15,11 +21,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.podmate.domain.pod.converter.PodConverter.*;
 import static com.podmate.domain.pod.converter.PodConverter.buildMinimumPodResponseDto;
+import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_MEMBER;
 
 @Service
 @Transactional
@@ -49,5 +58,47 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
+    public PodResponse getInprogressMembers(Long podId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+
+        Long leaderUserId = podUserMappingRepository.findLeaderUserIdByPodId(podId)
+                .orElseThrow(()-> new PodLeaderNotFoundException());
+
+        if(!leaderUserId.equals(user.getId())) {
+            throw new PodLeaderUserMismatchException();
+        }
+        Pod pod = podRepository.findById(podId).orElseThrow(() -> new PodNotFoundException());
+
+        List<User> members = podUserMappingRepository.findMembersByPodId(podId);
+
+        if (pod.getPodType() == PodType.MINIMUM) {
+            List<PodResponseDto.MinimumPodMember> podMembers = new ArrayList<>();
+            for (User member : members) {
+                PodUserMapping podUserMapping = podUserMappingRepository.findByPodIdAndUserIdAndPodRole(podId, member.getId(), POD_MEMBER)
+                        .orElseThrow(() -> new PodUserMappingNotFoundException());
+                podMembers.add(buildMinimumPodMemberResponseDto(member, podUserMapping.getIsApproved()));
+            }
+            return PodResponseDto.MinimumPodMembers.builder()
+                    .podId(pod.getId())
+                    .podMembers(podMembers)
+                    .build();
+        } else if (pod.getPodType() == PodType.GROUP_BUY) {
+            List<PodResponseDto.PodMember> podMembers = new ArrayList<>();
+            for (User member : members) {
+                PodUserMapping podUserMapping = podUserMappingRepository.findByPodIdAndUserIdAndPodRole(podId, member.getId(), POD_MEMBER)
+                        .orElseThrow(() -> new PodUserMappingNotFoundException());
+                podMembers.add(buildPodMemberResponseDto(member, podUserMapping.getIsApproved()));
+            }
+            return PodResponseDto.GroupBuyPodMembers.builder()
+                    .podId(pod.getId())
+                    .itemUrl(pod.getItemUrl())
+                    .podMembers(podMembers)
+                    .build();
+        }else {
+            throw new PodTypeNotFoundException();
+        }
+
+
+    }
 
 }

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -98,5 +100,45 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private String nickname;
         private String profileImageUrl;
         private String description;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class MinimumPodMembers implements PodResponse{
+        private Long podId;
+        private List<MinimumPodMember> podMembers;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class MinimumPodMember{
+        private Long userId;
+        private String nickname;
+        private String profileImageUrl;
+        private int totalAmount;    //orderform의 주문 금액
+        private double mannerScore;
+        private String isApproved;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class GroupBuyPodMembers implements PodResponse{
+        private Long podId;
+        private String itemUrl;
+        private List<PodMember> podMembers;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class PodMember{
+        private Long userId;
+        private String nickname;
+        private String profileImageUrl;
+        private double mannerScore;
+        private String isApproved;
     }
 }
