@@ -42,4 +42,11 @@ public class MyPageController {
         return BaseResponse.onSuccess(SuccessStatus._OK, "successfully saved tracking number!");
     }
 
+    //완료된 나의 팟 리스트 조회
+    @GetMapping("/completed/mypods")
+    public BaseResponse<List<PodResponse>> getCompletedMyPodList(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        List<PodResponse> completedMyPods = myPageService.getCompletedMyPods(customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, completedMyPods);
+    }
+
 }
