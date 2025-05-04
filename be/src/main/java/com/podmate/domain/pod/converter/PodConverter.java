@@ -43,6 +43,16 @@ public class PodConverter {
                 .build();
     }
 
+    public static PodResponseDto.MinimumCompleted buildMinimumCompletedResponseDto(Pod pod) {
+        return PodResponseDto.MinimumCompleted.builder()
+                .podId(pod.getId())
+                .podName(pod.getPodName())
+                .podType(pod.getPodType().name())
+                .podStatus(pod.getPodStatus().toString())
+                .platform(pod.getPlatform().name())
+                .build();
+    }
+
     public static PodResponseDto.GroupBuy buildGroupBuyPodResponseDto(Pod pod, boolean isJJim) {
         return PodResponseDto.GroupBuy.builder()
                 .podId(pod.getId())
@@ -78,6 +88,16 @@ public class PodConverter {
                 .itemUrl(pod.getItemUrl())
                 .goalAmount(pod.getGoalAmount())
                 .currentAmount(pod.getCurrentAmount())
+                .build();
+    }
+
+    public static PodResponseDto.GroupBuyCompleted buildGroupBuyCompletedResponseDto(Pod pod) {
+        return PodResponseDto.GroupBuyCompleted.builder()
+                .podId(pod.getId())
+                .podName(pod.getPodName())
+                .podType(pod.getPodType().name())
+                .podStatus(pod.getPodStatus().toString())
+                .itemUrl(pod.getItemUrl())
                 .build();
     }
 

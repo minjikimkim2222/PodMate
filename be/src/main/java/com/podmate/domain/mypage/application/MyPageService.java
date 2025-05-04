@@ -6,6 +6,7 @@ import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
 import com.podmate.domain.mypage.dto.MyPageRequestDto;
 import com.podmate.domain.pod.converter.PodConverter;
 import com.podmate.domain.pod.domain.entity.Pod;
+import com.podmate.domain.pod.domain.enums.PodStatus;
 import com.podmate.domain.pod.domain.enums.PodType;
 import com.podmate.domain.pod.domain.repository.PodRepository;
 import com.podmate.domain.pod.dto.PodResponse;
@@ -48,9 +49,9 @@ public class MyPageService {
     public List<PodResponse> getInprogressMyPods(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
 
-        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(userId, PodRole.POD_LEADER);
+        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(user.getId(), PodRole.POD_LEADER);
 
-        List<Pod> pods = podRepository.findAllByIdIn(podIds);
+        List<Pod> pods = podRepository.findAllByIdInAndPodStatus(podIds, PodStatus.IN_PROGRESS);
 
         // Pod 엔티티 -> PodResponse DTO 변환
         return pods.stream()
@@ -120,4 +121,22 @@ public class MyPageService {
         deliveryRepository.save(delivery);
     }
 
+    public List<PodResponse> getCompletedMyPods(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
+
+        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(userId, PodRole.POD_LEADER);
+
+        List<Pod> pods = podRepository.findAllByIdInAndPodStatus(podIds, PodStatus.COMPLETED);
+
+        // Pod 엔티티 -> PodResponse DTO 변환
+        return pods.stream()
+                .map(pod -> {
+                    if (pod.getPodType() == PodType.MINIMUM) {
+                        return buildMinimumCompletedResponseDto(pod);
+                    } else {
+                        return buildGroupBuyCompletedResponseDto(pod);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
 }
