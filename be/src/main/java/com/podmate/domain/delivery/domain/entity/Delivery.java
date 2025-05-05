@@ -30,7 +30,7 @@ public class Delivery extends BaseEntity {
     private Pod pod;
 
     @Column(nullable = false)
-    private String tackingNum;  //운송장 번호
+    private String trackingNum;  //운송장 번호
 
     @Column(nullable = false)
     private String courierCompany;  //택배사
@@ -41,9 +41,9 @@ public class Delivery extends BaseEntity {
     private DeliveryStatus deliveryStatus;  //배송 상태
 
     @Builder
-    public Delivery(Pod pod, String tackingNum, String courierCompany, LocalDate pickupDeadline, DeliveryStatus deliveryStatus) {
+    public Delivery(Pod pod, String trackingNum, String courierCompany, LocalDate pickupDeadline, DeliveryStatus deliveryStatus) {
         this.pod = pod;
-        this.tackingNum = tackingNum;
+        this.trackingNum = trackingNum;
         this.courierCompany = courierCompany;
         this.pickupDeadline = pickupDeadline;
         this.deliveryStatus = deliveryStatus;

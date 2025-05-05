@@ -34,7 +34,10 @@ public enum ErrorStatus implements BaseErrorCode {
     POD_LEADER_USER_MISMATCH(HttpStatus.BAD_REQUEST, "PODUSERMAPPING_400", "해당 팟의 리더가 주어진 사용자와 일치하지 않습니다."),
 
     // --- ADDRESS ---
-    ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "ADDRESS_404", "주소를 찾을 수 없습니다.");
+    ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "ADDRESS_404", "주소를 찾을 수 없습니다."),
+
+    // --- DELIVERY ---
+    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "DELIVERY_404", "팟ID에 맞는 배송 정보를 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
