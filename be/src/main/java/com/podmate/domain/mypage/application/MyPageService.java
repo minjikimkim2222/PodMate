@@ -181,7 +181,45 @@ public class MyPageService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    public PodResponse getInprogressJoinedPodInfo(Long podId, Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        Pod pod = podRepository.findById(podId)
+                .orElseThrow(() -> new PodNotFoundException());
+        // user가 POD_MEMBER인지 검증
+        podUserMappingRepository.findByPodIdAndUserIdAndPodRole(pod.getId(), user.getId(), PodRole.POD_MEMBER)
+                .orElseThrow(() -> new PodUserMappingNotFoundException());
+
+        PodUserMapping mapping = podUserMappingRepository.findByPodAndPodRole(pod, PodRole.POD_LEADER)
+                .orElseThrow(() -> new PodUserMappingNotFoundException());
+
+        User podLeader = mapping.getUser();
+
+        PodResponseDto.PodLeader podLeaderDto = new PodResponseDto.PodLeader(
+                podLeader.getNickname(),
+                podLeader.getProfileImage(),
+                pod.getDescription()
+        );
+
+        if (pod.getPodType() == PodType.MINIMUM){
+            return PodResponseDto.MinimumPodInfo.builder()
+                    .podId(pod.getId())
+                    .podLeader(podLeaderDto)
+                    .build();
+        } else if (pod.getPodType() == PodType.GROUP_BUY){
+            return PodResponseDto.GroupBuyPodInfo.builder()
+                    .podId(pod.getId())
+                    .podLeader(podLeaderDto)
+                    .itemUrl(pod.getItemUrl())
+                    .build();
+        }
+        return null;
 
     }
+
+
 
 }

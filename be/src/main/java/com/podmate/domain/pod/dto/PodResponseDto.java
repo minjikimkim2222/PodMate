@@ -186,4 +186,21 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private String courierCompany;
         private String trackingNum;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class MinimumPodInfo implements PodResponse{
+        private Long podId;
+        private PodLeader podLeader;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class GroupBuyPodInfo implements PodResponse{
+        private Long podId;
+        private PodLeader podLeader;
+        private String itemUrl;
+    }
 }
