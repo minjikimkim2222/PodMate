@@ -9,7 +9,9 @@ import com.podmate.global.common.response.BaseResponse;
 import com.podmate.global.util.oauth2.dto.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +50,16 @@ public class CartRestController {
             @RequestBody CartRequestDto.CartItemRequest request
     ){
         String response = cartService.addCartItems(user.getUserId(), request);
+
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
+    }
+
+    @DeleteMapping("/cartItems/{itemId}")
+    public BaseResponse<String> deleteCartItem(
+            @AuthenticationPrincipal CustomOAuth2User user,
+            @PathVariable Long itemId
+    ){
+        String response = cartService.deleteCartItem(user.getUserId(), itemId);
 
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }

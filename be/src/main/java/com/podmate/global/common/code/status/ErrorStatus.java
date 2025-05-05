@@ -46,7 +46,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // --- REVIEW ---
     INVALID_REVIEW_OPTION_TEXT(HttpStatus.NOT_FOUND, "REVIEW_400", "유효하지 않은 리뷰 옵션입니다."),
-    REVIEW_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_404", "리뷰 옵션을 찾을 수 없습니다.");
+    REVIEW_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_404", "리뷰 옵션을 찾을 수 없습니다."),
+
+    // --- CARTITEM --
+    CARTITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "CARTITEM_404", "장바구니 상품을 찾을 수 없습니다.");
 
 
 
