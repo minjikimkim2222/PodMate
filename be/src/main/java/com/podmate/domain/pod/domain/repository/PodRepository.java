@@ -11,5 +11,5 @@ public interface PodRepository extends JpaRepository<Pod, Long> {
 
     List<Pod> findAllByIdInAndPodStatus(List<Long> podIds, PodStatus podStatus);
 
-
+    boolean existsByIdAndPodStatus(Long podId, PodStatus podStatus);
 }
