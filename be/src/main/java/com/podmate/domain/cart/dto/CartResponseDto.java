@@ -14,7 +14,7 @@ public class CartResponseDto {
     @Getter
     @AllArgsConstructor
     public static class PlatformDto {
-        private Long platformId;
+        private Long platformInfoId;
         private String platformName;
     }
 }
