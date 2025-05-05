@@ -5,6 +5,7 @@ import com.podmate.domain.cart.domain.repository.CartItemRepository;
 import com.podmate.domain.cart.dto.CartRequestDto.CartCreateRequest;
 import com.podmate.domain.cart.dto.CartRequestDto.CartItemRequest;
 import com.podmate.domain.cart.dto.CartResponseDto.PlatformList;
+import com.podmate.domain.cart.exception.CartItemNotFoundException;
 import com.podmate.domain.crawling.CrawlingService;
 import com.podmate.domain.platformInfo.converter.PlatformConverter;
 import com.podmate.domain.platformInfo.domain.entity.PlatformInfo;
@@ -81,9 +82,29 @@ public class CartServiceImpl implements CartService {
         return "장바구니 속 상품이 성공적으로 저장되었습니다.";
     }
 
+    @Override
+    public String deleteCartItem(Long userId, Long cartItemId) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartItemNotFoundException());
+
+        validateOwnerShip(userId, cartItem);
+
+        cartItemRepository.delete(cartItem);
+
+        return "장바구니 속 상품이 성공적으로 삭제되었습니다.";
+    }
+
     private User findUser(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
+    }
+
+    private void validateOwnerShip(Long userId, CartItem cartItem){
+        Long ownerId = cartItem.getPlatformInfo().getUser().getId();
+
+        if (!ownerId.equals(userId)){
+            throw new PlatformAccessDeniedException();
+        }
     }
 
     private void validateOwnerShip(User user, PlatformInfo platformInfo){
