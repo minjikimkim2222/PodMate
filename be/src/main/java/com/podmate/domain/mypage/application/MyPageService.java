@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.podmate.domain.pod.converter.PodConverter.*;
+import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_LEADER;
 import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_MEMBER;
 
 @Service
@@ -45,12 +46,17 @@ public class MyPageService {
     private final PodRepository podRepository;
     private final DeliveryRepository deliveryRepository;
 
-    public List<PodResponse> getInprogressMyPods(Long userId) {
+    public List<Pod> getPodList(Long userId, PodRole podRole, PodStatus podStatus){
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
 
-        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(user.getId(), PodRole.POD_LEADER);
+        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(user.getId(), podRole);
 
-        List<Pod> pods = podRepository.findAllByIdInAndPodStatus(podIds, PodStatus.IN_PROGRESS);
+        List<Pod> pods = podRepository.findAllByIdInAndPodStatus(podIds, podStatus);
+        return pods;
+    }
+    public List<PodResponse> getInprogressMyPods(Long userId) {
+
+        List<Pod> pods = getPodList(userId, POD_LEADER, PodStatus.IN_PROGRESS);
 
         // Pod 엔티티 -> PodResponse DTO 변환
         return pods.stream()
@@ -139,12 +145,8 @@ public class MyPageService {
     }
 
     public List<PodResponse> getCompletedMyPods(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
 
-        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(user.getId(), PodRole.POD_LEADER);
-
-        List<Pod> pods = podRepository.findAllByIdInAndPodStatus(podIds, PodStatus.COMPLETED);
-
+        List<Pod> pods = getPodList(userId, POD_LEADER, PodStatus.COMPLETED);
         // Pod 엔티티 -> PodResponse DTO 변환
         return pods.stream()
                 .map(pod -> {
@@ -158,12 +160,8 @@ public class MyPageService {
     }
 
     public List<PodResponse> getInprogressJoinedPods(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
 
-        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(user.getId(), POD_MEMBER);
-
-        List<Pod> pods = podRepository.findAllByIdInAndPodStatus(podIds, PodStatus.IN_PROGRESS);
-
+        List<Pod> pods = getPodList(userId, POD_MEMBER, PodStatus.IN_PROGRESS);
         return pods.stream()
                 .map(pod -> {
                     Delivery delivery = deliveryRepository.findByPod_Id(pod.getId())
@@ -218,6 +216,20 @@ public class MyPageService {
         }
         return null;
 
+    }
+    public List<PodResponse> getCompletedJoinedPods(Long userId) {
+
+        List<Pod> pods = getPodList(userId, POD_MEMBER, PodStatus.COMPLETED);
+        // Pod 엔티티 -> PodResponse DTO 변환
+        return pods.stream()
+                .map(pod -> {
+                    if (pod.getPodType() == PodType.MINIMUM) {
+                        return buildMinimumCompletedResponseDto(pod);
+                    } else {
+                        return buildGroupBuyCompletedResponseDto(pod);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
 
