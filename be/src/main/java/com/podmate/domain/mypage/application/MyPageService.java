@@ -1,5 +1,6 @@
 package com.podmate.domain.mypage.application;
 
+import com.podmate.domain.delivery.DeliveryNotFoundException;
 import com.podmate.domain.delivery.domain.entity.Delivery;
 import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
@@ -67,6 +68,10 @@ public class MyPageService {
         return getPodMembersByStatus(podId, userId, PodStatus.IN_PROGRESS);
     }
 
+    public PodResponse getCompletedMembers(Long podId, Long userId) {
+        return getPodMembersByStatus(podId, userId, PodStatus.COMPLETED);
+    }
+
     public PodResponse getPodMembersByStatus(Long podId, Long userId, PodStatus requiredStatus) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
@@ -124,7 +129,7 @@ public class MyPageService {
 
         Delivery delivery = Delivery.builder()
                 .pod(pod)
-                .tackingNum(request.getTrackingNum())
+                .trackingNum(request.getTrackingNum())
                 .courierCompany(request.getCourierCompany())
                 .pickupDeadline(LocalDate.now().plusDays(5)) //오늘로부터 5일 뒤
                 .deliveryStatus(DeliveryStatus.SHIPPING)
@@ -136,7 +141,7 @@ public class MyPageService {
     public List<PodResponse> getCompletedMyPods(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
 
-        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(userId, PodRole.POD_LEADER);
+        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(user.getId(), PodRole.POD_LEADER);
 
         List<Pod> pods = podRepository.findAllByIdInAndPodStatus(podIds, PodStatus.COMPLETED);
 
@@ -152,7 +157,31 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
-    public PodResponse getCompletedMembers(Long podId, Long userId) {
-        return getPodMembersByStatus(podId, userId, PodStatus.COMPLETED);
+    public List<PodResponse> getInprogressJoinedPods(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
+
+        List<Long> podIds = podUserMappingRepository.findPodIdsByUserIdAndRole(user.getId(), POD_MEMBER);
+
+        List<Pod> pods = podRepository.findAllByIdInAndPodStatus(podIds, PodStatus.IN_PROGRESS);
+
+        return pods.stream()
+                .map(pod -> {
+                    Delivery delivery = deliveryRepository.findByPod_Id(pod.getId())
+                            .orElseThrow(() -> new DeliveryNotFoundException());
+
+                    PodResponseDto.DeliveryDto deliveryDto = PodResponseDto.DeliveryDto.builder()
+                            .courierCompany(delivery.getCourierCompany())
+                            .trackingNum(delivery.getTrackingNum())
+                            .build();
+
+                    if (pod.getPodType() == PodType.MINIMUM) {
+                        return buildMinimumInprogressJoinedResponseDto(pod, deliveryDto);
+                    } else {
+                        return buildGroupBuyInprogressJoinedResponseDto(pod, deliveryDto);
+                    }
+                })
+                .collect(Collectors.toList());
+
     }
+
 }

@@ -51,8 +51,15 @@ public class MyPageController {
 
     //완료된 나의 팟에 참여중인 팟원 리스트 조회
     @GetMapping("/completed/mypods/{podId}/podmembers")
-    public BaseResponse<PodResponse> getcompletedMyPodMembers(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+    public BaseResponse<PodResponse> getCompletedMyPodMembers(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         PodResponse completedMembers = myPageService.getCompletedMembers(podId, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, completedMembers);
+    }
+
+    //팟원으로 진행중인 팟 리스트 조회
+    @GetMapping("/inprogress/joinedpods")
+    public BaseResponse<List<PodResponse>> getInprogressJoinedPodList(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        List<PodResponse> inprogressJoinedPods = myPageService.getInprogressJoinedPods(customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, inprogressJoinedPods);
     }
 }

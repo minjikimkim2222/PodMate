@@ -1,5 +1,6 @@
 package com.podmate.domain.pod.dto;
 
+import com.podmate.domain.delivery.domain.entity.Delivery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,6 +61,22 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private String podType;
         private String podStatus;
         private String platform;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class MinimumInprogressJoined implements PodResponse{
+        private MinimumStatus minimumStatus;
+        private DeliveryDto deliveryDto;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class GroupBuyInprogressJoined implements PodResponse{
+        private GroupBuyStaus groupBuyStatus;
+        private DeliveryDto deliveryDto;
     }
 
     @Builder
@@ -160,5 +177,13 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private String profileImageUrl;
         private double mannerScore;
         private String isApproved;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class DeliveryDto{
+        private String courierCompany;
+        private String trackingNum;
     }
 }
