@@ -37,7 +37,11 @@ public enum ErrorStatus implements BaseErrorCode {
     ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "ADDRESS_404", "주소를 찾을 수 없습니다."),
 
     // --- DELIVERY ---
-    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "DELIVERY_404", "팟ID에 맞는 배송 정보를 찾을 수 없습니다.");
+    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "DELIVERY_404", "팟ID에 맞는 배송 정보를 찾을 수 없습니다."),
+
+    // --- REVIEW ---
+    INVALID_REVIEW_OPTION_TEXT(HttpStatus.NOT_FOUND, "REVIEW_400", "유효하지 않은 리뷰 옵션입니다."),
+    REVIEW_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_404", "리뷰 옵션을 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
