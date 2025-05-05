@@ -1,6 +1,8 @@
 package com.podmate.domain.cart.application;
 
 import com.podmate.domain.cart.dto.CartRequestDto.CartCreateRequest;
+import com.podmate.domain.cart.dto.CartResponseDto.PlatformList;
+import com.podmate.domain.platformInfo.converter.PlatformConverter;
 import com.podmate.domain.platformInfo.domain.entity.PlatformInfo;
 import com.podmate.domain.platformInfo.domain.repository.PlatformInfoRepository;
 import com.podmate.domain.platformInfo.exception.PlatformNotSupportedException;
@@ -8,6 +10,7 @@ import com.podmate.domain.pod.domain.enums.Platform;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
 import com.podmate.domain.user.exception.UserNotFoundException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,15 +26,28 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public String createCart(Long userId, CartCreateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException());
+        User user = findUser(userId);
 
         Platform platform = validatePlatform(request.getPlatformName());
 
-        PlatformInfo platformInfo = getOrCreatePlatformInfo(user, platform);
+        getOrCreatePlatformInfo(user, platform);
 
         return "장바구니가 생성되었습니다.";
 
+    }
+
+    @Override
+    public PlatformList getCartList(Long userId) {
+        User user = findUser(userId);
+
+        List<PlatformInfo> platformInfos = platformInfoRepository.findAllByUser(user);
+
+        return PlatformConverter.toPlatformList(platformInfos);
+    }
+
+    private User findUser(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
     }
 
     // 유효한 플랫폼인지 확인 -- Pod의 Platform enum에 존재하는지 유효성 체크 함수
