@@ -271,7 +271,7 @@ public class MyPageService {
 
                     // 해당 리뷰에 연결된 옵션 텍스트 리스트
                     List<String> optionTexts = reviewOptionMappingRepository.findAllByReviewId(review.getId()).stream()
-                            .map(mapping -> mapping.getReviewOption().getOptionText().name()) // enum 이름 기준
+                            .map(mapping -> mapping.getReviewOption().getOptionText().getReviewText()) // enum 이름 기준
                             .collect(Collectors.toList());
 
                     return ReviewResponseDto.MyReview.builder()
