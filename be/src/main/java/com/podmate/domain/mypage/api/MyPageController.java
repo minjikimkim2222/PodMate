@@ -91,4 +91,11 @@ public class MyPageController {
         List<ReviewResponseDto.MyReview> myReviews = myPageService.getMyReviews(customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, myReviews);
     }
+
+    //내가 받은 거래 후기 조회
+    @GetMapping("/reviews/received")
+    public BaseResponse<ReviewResponseDto.AboutMeReview> getReceivedReviews(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        ReviewResponseDto.AboutMeReview receivedReviews = myPageService.getReceivedReviews(customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, receivedReviews);
+    }
 }
