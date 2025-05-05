@@ -39,4 +39,29 @@ public class ReviewResponseDto {
         private List<String> optionTexts;
     }
 
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class AboutMeReview{
+        private Profile profile;
+        private List<ReceivedReview> reviews;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class Profile{
+        private String nickname;
+        private String profileImageUrl;
+        private double mannerScore;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class ReceivedReview{
+        private String optionText;
+        private int amount;     //optionText에 대하여 받은 개수
+    }
+
 }

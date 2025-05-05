@@ -34,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.podmate.domain.pod.converter.PodConverter.*;
@@ -269,7 +271,7 @@ public class MyPageService {
 
                     // 해당 리뷰에 연결된 옵션 텍스트 리스트
                     List<String> optionTexts = reviewOptionMappingRepository.findAllByReviewId(review.getId()).stream()
-                            .map(mapping -> mapping.getReviewOption().getOptionText().name()) // enum 이름 기준
+                            .map(mapping -> mapping.getReviewOption().getOptionText().getReviewText()) // enum 이름 기준
                             .collect(Collectors.toList());
 
                     return ReviewResponseDto.MyReview.builder()
@@ -278,6 +280,39 @@ public class MyPageService {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    public ReviewResponseDto.AboutMeReview getReceivedReviews(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        // user가 받은 리뷰들
+        List<Review> receivedReviews = reviewRepository.findAllByRecipient(user);
+
+        // 각 리뷰에서 ReviewOption을 찾아 OptionText 기준으로 그룹화
+        Map<String, Long> grouped = receivedReviews.stream()
+                .flatMap(review -> reviewOptionMappingRepository.findAllByReviewId(review.getId()).stream())
+                .map(mapping -> mapping.getReviewOption().getOptionText().getReviewText())  // optionText 가져오기
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));  // optionText별 개수 셈
+
+        // 받은 옵션들에 대해 ReceivedReview 객체 생성
+        List<ReviewResponseDto.ReceivedReview> reviews = grouped.entrySet().stream()
+                .map(entry -> new ReviewResponseDto.ReceivedReview(
+                        entry.getKey(),          // optionText
+                        entry.getValue().intValue() // amount
+                ))
+                .collect(Collectors.toList());
+
+        ReviewResponseDto.Profile profile = ReviewResponseDto.Profile.builder()
+                .nickname(user.getNickname())
+                .profileImageUrl(user.getProfileImage())
+                .mannerScore(user.getMannerScore())
+                .build();
+
+        return ReviewResponseDto.AboutMeReview.builder()
+                .profile(profile)
+                .reviews(reviews)
+                .build();
 
     }
 }
