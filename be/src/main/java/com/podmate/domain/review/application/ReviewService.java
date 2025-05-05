@@ -58,7 +58,7 @@ public class ReviewService {
                 .map(mapping -> {
                     User reviewTarget = mapping.getUser();
                     return ReviewResponseDto.PodMember.builder()
-                            .userID(reviewTarget.getId())
+                            .userId(reviewTarget.getId())
                             .nickname(reviewTarget.getNickname())
                             .profileImageUrl(reviewTarget.getProfileImage())
                             .build();

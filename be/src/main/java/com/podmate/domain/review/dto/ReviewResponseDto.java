@@ -26,8 +26,17 @@ public class ReviewResponseDto {
     @Getter
     @AllArgsConstructor
     public static class PodMember{
-        private Long userID;
+        private Long userId;
         private String nickname;
         private String profileImageUrl;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class MyReview{
+        private PodMember recipient;
+        private List<String> optionTexts;
+    }
+
 }
