@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,9 @@ public class ReviewOptionMapping {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_option_id")
     private ReviewOption reviewOption;
+
+    public ReviewOptionMapping(Review review, ReviewOption reviewOption) {
+        this.review = review;
+        this.reviewOption = reviewOption;
+    }
 }

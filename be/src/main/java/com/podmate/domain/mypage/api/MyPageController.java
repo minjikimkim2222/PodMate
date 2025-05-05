@@ -4,6 +4,7 @@ import com.podmate.domain.mypage.application.MyPageService;
 import com.podmate.domain.mypage.dto.MyPageRequestDto;
 import com.podmate.domain.pod.dto.PodResponse;
 import com.podmate.domain.pod.dto.PodResponseDto;
+import com.podmate.domain.review.dto.ReviewResponseDto;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.global.common.code.status.SuccessStatus;
 import com.podmate.global.common.response.BaseResponse;
@@ -82,5 +83,12 @@ public class MyPageController {
     public BaseResponse<PodResponse> getCompletedJoinedPodInfo(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         PodResponse completedJoinedPodInfo = myPageService.getCompletedJoinedPodInfo(podId, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, completedJoinedPodInfo);
+    }
+
+    //내가 남긴 후기 조회
+    @GetMapping("/reviews/me")
+    public BaseResponse<List<ReviewResponseDto.MyReview>> getMyReviews(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        List<ReviewResponseDto.MyReview> myReviews = myPageService.getMyReviews(customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, myReviews);
     }
 }

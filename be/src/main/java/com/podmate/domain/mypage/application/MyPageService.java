@@ -20,6 +20,10 @@ import com.podmate.domain.podUserMapping.domain.repository.PodUserMappingReposit
 import com.podmate.domain.podUserMapping.exception.PodLeaderNotFoundException;
 import com.podmate.domain.podUserMapping.exception.PodLeaderUserMismatchException;
 import com.podmate.domain.podUserMapping.exception.PodUserMappingNotFoundException;
+import com.podmate.domain.review.domain.entity.Review;
+import com.podmate.domain.review.domain.repository.ReviewOptionMappingRepository;
+import com.podmate.domain.review.domain.repository.ReviewRepository;
+import com.podmate.domain.review.dto.ReviewResponseDto;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
 import com.podmate.domain.user.exception.UserNotFoundException;
@@ -45,6 +49,8 @@ public class MyPageService {
     private final PodUserMappingRepository podUserMappingRepository;
     private final PodRepository podRepository;
     private final DeliveryRepository deliveryRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewOptionMappingRepository reviewOptionMappingRepository;
 
     public List<Pod> getPodList(Long userId, PodRole podRole, PodStatus podStatus){
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
@@ -244,5 +250,34 @@ public class MyPageService {
                     .build();
         }
         return null;
+    }
+
+    public List<ReviewResponseDto.MyReview> getMyReviews(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        List<Review> reviews = reviewRepository.findAllByWriter(user);
+
+        return reviews.stream()
+                .map(review -> {
+                    // 리뷰 대상자 정보
+                    ReviewResponseDto.PodMember recipientDto = ReviewResponseDto.PodMember.builder()
+                            .userId(review.getRecipient().getId())
+                            .profileImageUrl(review.getRecipient().getProfileImage())
+                            .nickname(review.getRecipient().getNickname())
+                            .build();
+
+                    // 해당 리뷰에 연결된 옵션 텍스트 리스트
+                    List<String> optionTexts = reviewOptionMappingRepository.findAllByReviewId(review.getId()).stream()
+                            .map(mapping -> mapping.getReviewOption().getOptionText().name()) // enum 이름 기준
+                            .collect(Collectors.toList());
+
+                    return ReviewResponseDto.MyReview.builder()
+                            .recipient(recipientDto)
+                            .optionTexts(optionTexts)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
     }
 }
