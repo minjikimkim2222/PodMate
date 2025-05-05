@@ -37,7 +37,10 @@ public enum ErrorStatus implements BaseErrorCode {
     ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "ADDRESS_404", "주소를 찾을 수 없습니다."),
 
     // --- DELIVERY ---
-    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "DELIVERY_404", "팟ID에 맞는 배송 정보를 찾을 수 없습니다.");
+    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "DELIVERY_404", "팟ID에 맞는 배송 정보를 찾을 수 없습니다."),
+
+    // --- PLATFORMINFO --
+    PLATFORM_NOT_SUPPORTED(HttpStatus.NOT_FOUND, "PLATFORM_404", "지원하지 않는 플랫폼입니다.");
 
 
     private final HttpStatus httpStatus;
