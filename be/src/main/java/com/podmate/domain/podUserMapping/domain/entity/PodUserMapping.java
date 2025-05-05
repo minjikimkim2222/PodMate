@@ -2,6 +2,7 @@ package com.podmate.domain.podUserMapping.domain.entity;
 
 import com.podmate.domain.address.domain.entity.Address;
 import com.podmate.domain.model.entity.BaseEntity;
+import com.podmate.domain.orderForm.domain.entity.OrderForm;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.enums.InprogressStatus;
 import com.podmate.domain.pod.domain.enums.Platform;
@@ -36,7 +37,9 @@ public class PodUserMapping extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    //private Order orderFormId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_form_id")
+    private OrderForm orderForm;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -52,6 +55,19 @@ public class PodUserMapping extends BaseEntity {
         this.user = user;
         this.isApproved = isApproved;
         this.podRole = podRole;
+    }
+
+
+    // 팩토리 메서드 패턴 추가
+    public static PodUserMapping updatePodUserMappingForOrderForm(Pod pod, User user, OrderForm orderForm, IsApproved isApproved, PodRole podRole) {
+        PodUserMapping mapping = new PodUserMapping();
+        mapping.pod = pod;
+        mapping.user = user;
+        mapping.orderForm = orderForm;
+        mapping.isApproved = isApproved;
+        mapping.podRole = podRole;
+
+        return mapping;
     }
 
 }
