@@ -1,9 +1,11 @@
 package com.podmate.domain.cart.application;
 
+import com.podmate.domain.cart.converter.CartItemConverter;
 import com.podmate.domain.cart.domain.entity.CartItem;
 import com.podmate.domain.cart.domain.repository.CartItemRepository;
 import com.podmate.domain.cart.dto.CartRequestDto.CartCreateRequest;
 import com.podmate.domain.cart.dto.CartRequestDto.CartItemRequest;
+import com.podmate.domain.cart.dto.CartResponseDto.CartItemList;
 import com.podmate.domain.cart.dto.CartResponseDto.PlatformList;
 import com.podmate.domain.cart.exception.CartItemNotFoundException;
 import com.podmate.domain.crawling.CrawlingService;
@@ -51,6 +53,18 @@ public class CartServiceImpl implements CartService {
         List<PlatformInfo> platformInfos = platformInfoRepository.findAllByUser(user);
 
         return PlatformConverter.toPlatformList(platformInfos);
+    }
+
+    @Override
+    public CartItemList getCartItems(Long userId, Long platformInfoId) {
+        PlatformInfo platformInfo = platformInfoRepository.findById(platformInfoId)
+                .orElseThrow(() -> new PlatformNotSupportedException());
+
+        validateOwnerShip(findUser(userId), platformInfo);
+
+        List<CartItem> cartItems = cartItemRepository.findAllByPlatformInfo(platformInfo);
+
+        return CartItemConverter.toCartItemListResponse(cartItems);
     }
 
     @Override

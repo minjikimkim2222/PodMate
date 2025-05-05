@@ -3,6 +3,7 @@ package com.podmate.domain.cart.api;
 import com.podmate.domain.cart.application.CartService;
 import com.podmate.domain.cart.dto.CartRequestDto;
 import com.podmate.domain.cart.dto.CartResponseDto;
+import com.podmate.domain.cart.dto.CartResponseDto.CartItemList;
 import com.podmate.domain.cart.dto.CartResponseDto.PlatformList;
 import com.podmate.global.common.code.status.SuccessStatus;
 import com.podmate.global.common.response.BaseResponse;
@@ -40,6 +41,17 @@ public class CartRestController {
             @RequestParam(name = "podId", required = true) Long podId // 필수값 -- podId를 계속 전달해주기 위함
     ) {
         CartResponseDto.PlatformList response = cartService.getCartList(user.getUserId());
+
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
+    }
+
+    @GetMapping("/cartItems")
+    public BaseResponse<CartResponseDto.CartItemList> getCartItems(
+            @AuthenticationPrincipal CustomOAuth2User user,
+            @RequestParam(name = "platformInfoId", required = true) Long platformInfoId,
+            @RequestParam(name = "podId", required = true) Long podId
+    ){
+        CartResponseDto.CartItemList response = cartService.getCartItems(user.getUserId(), platformInfoId);
 
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
