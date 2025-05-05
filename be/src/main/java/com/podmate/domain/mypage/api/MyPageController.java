@@ -76,4 +76,11 @@ public class MyPageController {
         List<PodResponse> completedJoinedPods = myPageService.getCompletedJoinedPods(customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, completedJoinedPods);
     }
+
+    //완료된 참여 팟 정보 조회
+    @GetMapping("/completed/joinedpods/{podId}")
+    public BaseResponse<PodResponse> getCompletedJoinedPodInfo(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        PodResponse completedJoinedPodInfo = myPageService.getCompletedJoinedPodInfo(podId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, completedJoinedPodInfo);
+    }
 }

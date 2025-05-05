@@ -91,9 +91,10 @@ public class MyPageService {
         Pod pod = podRepository.findById(podId)
                 .orElseThrow(() -> new PodNotFoundException());
 
-        if (pod.getPodStatus() != requiredStatus) {
+        if (!podRepository.existsByIdAndPodStatus(podId, requiredStatus)) {
             throw new PodStatusMismatchException();
         }
+
         List<User> members = podUserMappingRepository.findMembersByPodId(podId);
 
         if (pod.getPodType() == PodType.MINIMUM) {
@@ -181,7 +182,35 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
+    public List<PodResponse> getCompletedJoinedPods(Long userId) {
+
+        List<Pod> pods = getPodList(userId, POD_MEMBER, PodStatus.COMPLETED);
+        // Pod 엔티티 -> PodResponse DTO 변환
+        return pods.stream()
+                .map(pod -> {
+                    if (pod.getPodType() == PodType.MINIMUM) {
+                        return buildMinimumCompletedResponseDto(pod);
+                    } else {
+                        return buildGroupBuyCompletedResponseDto(pod);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
     public PodResponse getInprogressJoinedPodInfo(Long podId, Long userId){
+        if (!podRepository.existsByIdAndPodStatus(podId, PodStatus.IN_PROGRESS)) {
+            throw new PodStatusMismatchException();
+        }
+        return getPodInfo(podId, userId);
+    }
+    public PodResponse getCompletedJoinedPodInfo(Long podId, Long userId){
+        if (!podRepository.existsByIdAndPodStatus(podId, PodStatus.COMPLETED)) {
+            throw new PodStatusMismatchException();
+        }
+        return getPodInfo(podId, userId);
+    }
+
+    public PodResponse getPodInfo(Long podId, Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
 
@@ -215,23 +244,5 @@ public class MyPageService {
                     .build();
         }
         return null;
-
     }
-    public List<PodResponse> getCompletedJoinedPods(Long userId) {
-
-        List<Pod> pods = getPodList(userId, POD_MEMBER, PodStatus.COMPLETED);
-        // Pod 엔티티 -> PodResponse DTO 변환
-        return pods.stream()
-                .map(pod -> {
-                    if (pod.getPodType() == PodType.MINIMUM) {
-                        return buildMinimumCompletedResponseDto(pod);
-                    } else {
-                        return buildGroupBuyCompletedResponseDto(pod);
-                    }
-                })
-                .collect(Collectors.toList());
-    }
-
-
-
 }
