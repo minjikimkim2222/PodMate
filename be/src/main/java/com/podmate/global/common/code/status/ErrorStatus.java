@@ -42,6 +42,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // --- PLATFORMINFO --
     PLATFORM_NOT_SUPPORTED(HttpStatus.NOT_FOUND, "PLATFORM_404", "지원하지 않는 플랫폼입니다."),
+    PLATFORM_ACCESS_DENIED_EXCEPTION(HttpStatus.FORBIDDEN, "PLATFORM_403", "해당 장바구니는 본인의 것이 아닙니다."),
 
     // --- REVIEW ---
     INVALID_REVIEW_OPTION_TEXT(HttpStatus.NOT_FOUND, "REVIEW_400", "유효하지 않은 리뷰 옵션입니다."),

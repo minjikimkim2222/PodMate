@@ -41,4 +41,14 @@ public class CartRestController {
 
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
+
+    @PostMapping("/cartItem")
+    public BaseResponse<String> addCartItems(
+            @AuthenticationPrincipal CustomOAuth2User user,
+            @RequestBody CartRequestDto.CartItemRequest request
+    ){
+        String response = cartService.addCartItems(user.getUserId(), request);
+
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
+    }
 }
