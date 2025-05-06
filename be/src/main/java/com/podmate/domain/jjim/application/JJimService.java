@@ -2,6 +2,8 @@ package com.podmate.domain.jjim.application;
 
 import com.podmate.domain.jjim.domain.entity.JJim;
 import com.podmate.domain.jjim.domain.repository.JJimRepository;
+import com.podmate.domain.jjim.dto.JJimResponseDto;
+import com.podmate.domain.jjim.exception.DuplicateJJimException;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.repository.PodRepository;
 import com.podmate.domain.pod.exception.PodNotFoundException;
@@ -13,6 +15,9 @@ import com.podmate.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,7 +39,31 @@ public class JJimService {
         if(!podUserMappingRepository.existsByPod_IdAndUser_Id(pod.getId(), user.getId())){
             throw new PodUserMappingNotFoundException();
         }
+        if (jjimRepository.existsByUserIdAndPodId(user.getId(), pod.getId())) {
+            throw new DuplicateJJimException();
+        }
 
         jjimRepository.save(new JJim(user, pod));
+    }
+
+    public List<JJimResponseDto> getJJimList(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        List<JJim> list = jjimRepository.findAllByUserId(user.getId());
+
+        return list.stream()
+                .map(jjim -> {
+                    Pod pod = jjim.getPod();
+                    return JJimResponseDto.builder()
+                            .podId(pod.getId())
+                            .podName(pod.getPodName())
+                            .podType(pod.getPodType().name())
+                            .platform(pod.getPlatform().name())
+                            .goalAmount(pod.getGoalAmount())
+                            .currentAmount(pod.getCurrentAmount())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 }

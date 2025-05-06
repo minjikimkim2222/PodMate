@@ -26,7 +26,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // --- POD ---
     POD_NOT_FOUND(HttpStatus.NOT_FOUND, "POD_404", "팟을 찾을 수 없습니다."),
     POD_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "POD_404", "팟 타입을 찾을 수 없습니다."),
-    POD_STATUS_MISMATCH(HttpStatus.NOT_FOUND, "POD_400", "팟 상태 값이 일치하지 않습니다."),
+    POD_STATUS_MISMATCH(HttpStatus.BAD_REQUEST, "POD_400", "팟 상태 값이 일치하지 않습니다."),
 
     // --- PODUSERMAPPING ---
     POD_USER_MAPPING_NOT_FOUND(HttpStatus.NOT_FOUND, "PODUSERMAPPING_404", "팟ID에 맞는 유저를 찾을 수 없습니다."),
@@ -39,6 +39,8 @@ public enum ErrorStatus implements BaseErrorCode {
     // --- DELIVERY ---
     DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "DELIVERY_404", "팟ID에 맞는 배송 정보를 찾을 수 없습니다."),
 
+    // --- JJIM ---
+    DUPLICATE_JJIM(HttpStatus.CONFLICT, "JJIM_409", "이미 찜한 팟입니다."),
 
     // --- PLATFORMINFO --
     PLATFORM_NOT_SUPPORTED(HttpStatus.NOT_FOUND, "PLATFORM_404", "지원하지 않는 플랫폼입니다."),
