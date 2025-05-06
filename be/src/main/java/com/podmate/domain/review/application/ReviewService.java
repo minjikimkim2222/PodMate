@@ -48,7 +48,7 @@ public class ReviewService {
         Pod pod = podRepository.findById(podId)
                 .orElseThrow(() -> new PodNotFoundException());
 
-        if(!podUserMappingRepository.existsByPod_IdAndUser_Id(podId, userId)){
+        if(!podUserMappingRepository.existsByPod_IdAndUser_Id(pod.getId(), user.getId())){
             throw new PodUserMappingNotFoundException();
         }
         List<PodUserMapping> allByPodIdAndUserId = podUserMappingRepository.findAllByPod_Id(pod.getId());

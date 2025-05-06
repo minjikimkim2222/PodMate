@@ -25,4 +25,9 @@ public class JJim extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pod_id")
     private Pod pod;
+
+    public JJim(User user, Pod pod) {
+        this.user = user;
+        this.pod = pod;
+    }
 }
