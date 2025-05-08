@@ -7,7 +7,7 @@ import lombok.Getter;
 public class AddressRequestDto {
 
     @Getter
-    public static class UserAddressUpdateRequest {
+    public static class AddressUpdateRequest {
         private String roadAddress;
         private Double latitude;
         private Double longitude;
