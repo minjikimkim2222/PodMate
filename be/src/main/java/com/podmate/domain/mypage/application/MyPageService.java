@@ -5,6 +5,12 @@ import com.podmate.domain.delivery.domain.entity.Delivery;
 import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
 import com.podmate.domain.mypage.dto.MyPageRequestDto;
+import com.podmate.domain.orderForm.converter.OrderFormConverter;
+import com.podmate.domain.orderForm.domain.entity.OrderForm;
+import com.podmate.domain.orderForm.domain.entity.OrderItem;
+import com.podmate.domain.orderForm.domain.repository.OrderFormRepository;
+import com.podmate.domain.orderForm.domain.repository.OrderItemRepository;
+import com.podmate.domain.orderForm.dto.OrderFormResponseDto;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.enums.PodStatus;
 import com.podmate.domain.pod.domain.enums.PodType;
@@ -27,7 +33,9 @@ import com.podmate.domain.review.dto.ReviewResponseDto;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
 import com.podmate.domain.user.exception.UserNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +43,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -53,6 +62,8 @@ public class MyPageService {
     private final DeliveryRepository deliveryRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewOptionMappingRepository reviewOptionMappingRepository;
+    private final OrderFormRepository orderFormRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public List<Pod> getPodList(Long userId, PodRole podRole, PodStatus podStatus){
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
@@ -109,7 +120,7 @@ public class MyPageService {
             List<PodResponseDto.MinimumPodMember> podMembers = members.stream()
                     .map(member -> {
                         PodUserMapping mapping = podUserMappingRepository
-                                .findByPodIdAndUserIdAndPodRole(podId, member.getId(), POD_MEMBER)
+                                .findByPod_IdAndUser_IdAndPodRole(podId, member.getId(), POD_MEMBER)
                                 .orElseThrow(PodUserMappingNotFoundException::new);
                         return buildMinimumPodMemberResponseDto(member, mapping.getIsApproved());
                     }).toList();
@@ -123,7 +134,7 @@ public class MyPageService {
             List<PodResponseDto.PodMember> podMembers = members.stream()
                     .map(member -> {
                         PodUserMapping mapping = podUserMappingRepository
-                                .findByPodIdAndUserIdAndPodRole(podId, member.getId(), POD_MEMBER)
+                                .findByPod_IdAndUser_IdAndPodRole(podId, member.getId(), POD_MEMBER)
                                 .orElseThrow(PodUserMappingNotFoundException::new);
                         return buildPodMemberResponseDto(member, mapping.getIsApproved());
                     }).toList();
@@ -138,6 +149,24 @@ public class MyPageService {
         }
     }
 
+    public OrderFormResponseDto.OrderFormDetailDto getMyPodOrderFrom(Long podId, Long memberId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+        User member = userRepository.findById(memberId)
+                .orElseThrow(() -> new UserNotFoundException());
+        Pod pod = podRepository.findById(podId)
+                .orElseThrow(() -> new PodNotFoundException());
+
+        if(!podUserMappingRepository.existsByPod_IdAndUser_Id(pod.getId(), user.getId())){
+            throw new PodUserMappingNotFoundException();
+        }
+        PodUserMapping podUserMapping = podUserMappingRepository.findByPod_IdAndUser_IdAndPodRole(pod.getId(), member.getId(), POD_MEMBER)
+                .orElseThrow(() -> new PodNotFoundException());
+        OrderForm orderForm = podUserMapping.getOrderForm();
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrderForm(orderForm);
+
+        return OrderFormConverter.toDetailResponseDto(orderItems, orderForm.getTotalAmount());
+    }
     public void addTrackingNum(MyPageRequestDto request, Long podId, Long userId){
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         Pod pod = podRepository.findById(podId).orElseThrow(() -> new PodNotFoundException());
@@ -225,7 +254,7 @@ public class MyPageService {
         Pod pod = podRepository.findById(podId)
                 .orElseThrow(() -> new PodNotFoundException());
         // user가 POD_MEMBER인지 검증
-        podUserMappingRepository.findByPodIdAndUserIdAndPodRole(pod.getId(), user.getId(), PodRole.POD_MEMBER)
+        podUserMappingRepository.findByPod_IdAndUser_IdAndPodRole(pod.getId(), user.getId(), PodRole.POD_MEMBER)
                 .orElseThrow(() -> new PodUserMappingNotFoundException());
 
         PodUserMapping mapping = podUserMappingRepository.findByPodAndPodRole(pod, PodRole.POD_LEADER)

@@ -4,6 +4,7 @@ import com.podmate.domain.cart.application.CartService;
 import com.podmate.domain.cart.dto.CartResponseDto;
 import com.podmate.domain.mypage.application.MyPageService;
 import com.podmate.domain.mypage.dto.MyPageRequestDto;
+import com.podmate.domain.orderForm.dto.OrderFormResponseDto;
 import com.podmate.domain.pod.dto.PodResponse;
 import com.podmate.domain.pod.dto.PodResponseDto;
 import com.podmate.domain.review.dto.ReviewResponseDto;
@@ -45,6 +46,13 @@ public class MyPageController {
     public BaseResponse<PodResponse> getInprogressMyPodMembers(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         PodResponse inprogressMembers = myPageService.getInprogressMembers(podId, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, inprogressMembers);
+    }
+
+    //나의 팟에서 팟원의 주문서 상세 보기
+    @GetMapping("/mypods/{podId}/{memberId}/order")
+    public BaseResponse<OrderFormResponseDto.OrderFormDetailDto> getMyPodOrderFrom(@PathVariable("podId") Long podId, @PathVariable("memberId") Long memberId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        OrderFormResponseDto.OrderFormDetailDto myPodOrderFrom = myPageService.getMyPodOrderFrom(podId, memberId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, myPodOrderFrom);
     }
 
     //운송장 입력
