@@ -2,10 +2,12 @@ package com.podmate.domain.orderForm.application;
 
 import com.podmate.domain.cart.domain.entity.CartItem;
 import com.podmate.domain.cart.domain.repository.CartItemRepository;
+import com.podmate.domain.orderForm.converter.OrderFormConverter;
 import com.podmate.domain.orderForm.domain.entity.OrderForm;
 import com.podmate.domain.orderForm.domain.entity.OrderItem;
 import com.podmate.domain.orderForm.domain.repository.OrderFormRepository;
 import com.podmate.domain.orderForm.domain.repository.OrderItemRepository;
+import com.podmate.domain.orderForm.dto.OrderFormResponseDto.OrderFormListResponseDto;
 import com.podmate.domain.platformInfo.exception.PlatformAccessDeniedException;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.enums.Platform;
@@ -58,6 +60,15 @@ public class OrderFormServiceImpl implements OrderFormService{
         savePodUserMapping(pod, user, orderForm);
 
         return orderForm.getId(); // 생성한 주문서 Id 반환
+    }
+    @Override
+    public OrderFormListResponseDto getMyOrderForms(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        List<OrderForm> orderFormList = orderFormRepository.findAllByUser(user);
+
+        return OrderFormConverter.toListResponseDto(orderFormList);
     }
 
     // 유저 권한 체크 (내 장바구니 맞는지)
