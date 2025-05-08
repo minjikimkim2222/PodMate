@@ -17,7 +17,7 @@ public interface PodUserMappingRepository extends JpaRepository<PodUserMapping, 
     Optional<PodUserMapping> findByPodAndPodRole(Pod pod, PodRole podRole);
 
     //podId, userId, podRole 일치하는 PodUserMapping 하나 조회
-    Optional<PodUserMapping> findByPodIdAndUserIdAndPodRole(Long podId, Long userId, PodRole podRole);
+    Optional<PodUserMapping> findByPod_IdAndUser_IdAndPodRole(Long podId, Long userId, PodRole podRole);
 
     List<PodUserMapping> findAllByPod_Id(Long podId);
 
