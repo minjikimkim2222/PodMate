@@ -1,5 +1,7 @@
 package com.podmate.domain.mypage.api;
 
+import com.podmate.domain.cart.application.CartService;
+import com.podmate.domain.cart.dto.CartResponseDto;
 import com.podmate.domain.mypage.application.MyPageService;
 import com.podmate.domain.mypage.dto.MyPageRequestDto;
 import com.podmate.domain.pod.dto.PodResponse;
@@ -21,6 +23,15 @@ import java.util.List;
 public class MyPageController {
 
     private final MyPageService myPageService;
+    private final CartService cartService;
+
+    //나의 장바구니 목록 조회
+    @GetMapping("/carts/platforms")
+    public BaseResponse<CartResponseDto.PlatformList> getCartList(@AuthenticationPrincipal CustomOAuth2User user) {
+        CartResponseDto.PlatformList response = cartService.getCartList(user.getUserId());
+
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
+    }
 
     //진행중인 나의 팟 리스트 조회
     @GetMapping("/inprogress/mypods")
