@@ -51,7 +51,11 @@ public enum ErrorStatus implements BaseErrorCode {
     REVIEW_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_404", "리뷰 옵션을 찾을 수 없습니다."),
 
     // --- CARTITEM --
-    CARTITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "CARTITEM_404", "장바구니 상품을 찾을 수 없습니다.");
+    CARTITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "CARTITEM_404", "장바구니 상품을 찾을 수 없습니다."),
+
+    // --- ORDERFORM ---
+    ORDERFORM_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDERFORM_404", "해당 주문서를 찾을 수 없습니다."),
+    ORDERFORM_ACCESS_DENIED_EXCEPTION(HttpStatus.FORBIDDEN, "ORDERFORM_403", "해당 주문서는 본인의 것이 아닙니다.");
 
 
 

@@ -7,4 +7,5 @@ public interface OrderFormService {
     Long createOrderForm(Long userId, Long podId, List<Long> itemIds);
     OrderFormResponseDto.OrderFormListResponseDto getMyOrderForms(Long userId);
 
+    OrderFormResponseDto.OrderFormDetailDto getMyOrderFormDetail(Long userId, Long orderformId);
 }
