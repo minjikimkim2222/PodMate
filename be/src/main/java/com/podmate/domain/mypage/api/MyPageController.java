@@ -90,6 +90,13 @@ public class MyPageController {
         return BaseResponse.onSuccess(SuccessStatus._OK, inprogressJoinedPodInfo);
     }
 
+    //참여 팟에서 나의 주문서 상세 보기
+    @GetMapping("/joinedpods/{podId}/order")
+    public BaseResponse<OrderFormResponseDto.OrderFormDetailDto> getMyOrderFrom(@PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        OrderFormResponseDto.OrderFormDetailDto myOrderFrom = myPageService.getMyOrderFrom(podId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, myOrderFrom);
+    }
+
     //완료된 참여 팟 리스트 조회
     @GetMapping("/completed/joinedpods")
     public BaseResponse<List<PodResponse>> getCompletedJoinedPodList(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {

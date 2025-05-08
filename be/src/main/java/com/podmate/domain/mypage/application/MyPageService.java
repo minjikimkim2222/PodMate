@@ -167,6 +167,23 @@ public class MyPageService {
 
         return OrderFormConverter.toDetailResponseDto(orderItems, orderForm.getTotalAmount());
     }
+
+    public OrderFormResponseDto.OrderFormDetailDto getMyOrderFrom(Long podId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+        Pod pod = podRepository.findById(podId)
+                .orElseThrow(() -> new PodNotFoundException());
+        if(!podUserMappingRepository.existsByPod_IdAndUser_Id(pod.getId(), user.getId())){
+            throw new PodUserMappingNotFoundException();
+        }
+        PodUserMapping podUserMapping = podUserMappingRepository.findByPod_IdAndUser_IdAndPodRole(pod.getId(), user.getId(), POD_MEMBER) //위 로직과 이 부분만 다름(member.getId<->user.getId)
+                .orElseThrow(() -> new PodNotFoundException());
+        OrderForm orderForm = podUserMapping.getOrderForm();
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrderForm(orderForm);
+
+        return OrderFormConverter.toDetailResponseDto(orderItems, orderForm.getTotalAmount());
+    }
+
     public void addTrackingNum(MyPageRequestDto request, Long podId, Long userId){
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         Pod pod = podRepository.findById(podId).orElseThrow(() -> new PodNotFoundException());
