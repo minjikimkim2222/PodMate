@@ -37,7 +37,7 @@ public class UserRestController {
     @PutMapping("/me/address")
     public BaseResponse<UserResponseDto.AddressInfo> updateAddress(
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
-            @RequestBody AddressRequestDto.UserAddressUpdateRequest userAddressUpdateRequest
+            @RequestBody AddressRequestDto.AddressUpdateRequest userAddressUpdateRequest
             ){
         UserResponseDto.AddressInfo response = userService.updateAddress(customOAuth2User.getUserId(), userAddressUpdateRequest);
 

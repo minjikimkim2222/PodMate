@@ -1,5 +1,6 @@
 package com.podmate.domain.pod.api;
 
+import com.podmate.domain.address.dto.AddressRequestDto;
 import com.podmate.domain.pod.application.PodService;
 import com.podmate.domain.pod.domain.enums.SortBy;
 import com.podmate.domain.pod.dto.PodRequestDto;
@@ -54,4 +55,17 @@ public class PodRestController {
         Long podId = podService.createGroupBuy(request, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, podId);
     }
+
+    // 팟 생성 주소 저장하기
+    @PostMapping("/addresses")
+    public BaseResponse<Long> createAddress(
+            @AuthenticationPrincipal CustomOAuth2User user,
+            @RequestBody AddressRequestDto.AddressUpdateRequest podAddressCreateRequest
+            ){
+        Long addressId = podService.createAddress(podAddressCreateRequest);
+
+        return BaseResponse.onSuccess(SuccessStatus._CREATED, addressId);
+    }
+
+
 }

@@ -2,6 +2,8 @@ package com.podmate.domain.pod.application;
 
 import com.podmate.domain.address.domain.entity.Address;
 import com.podmate.domain.address.domain.repository.AddressRepository;
+import com.podmate.domain.address.dto.AddressRequestDto;
+import com.podmate.domain.address.dto.AddressRequestDto.AddressUpdateRequest;
 import com.podmate.domain.address.exception.AddressNotFoundException;
 import com.podmate.domain.jjim.domain.entity.JJim;
 import com.podmate.domain.jjim.domain.repository.JJimRepository;
@@ -226,6 +228,17 @@ public class PodService {
         podUserMappingRepository.save(mapping);
 
         return savedPod.getId();
+    }
+
+    public Long createAddress(AddressRequestDto.AddressUpdateRequest request){
+        Address address = Address.builder()
+                .roadAddress(request.getRoadAddress())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .build();
+        Address savedAddress = addressRepository.save(address);
+
+        return savedAddress.getId();
     }
 
 }

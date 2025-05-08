@@ -8,7 +8,7 @@ import com.podmate.domain.user.dto.UserResponseDto;
 public interface UserService {
     UserResponseDto.MyInfo getMyInfo(User user);
 
-    UserResponseDto.AddressInfo updateAddress(Long userId, AddressRequestDto.UserAddressUpdateRequest addressUpdateRequest);
+    UserResponseDto.AddressInfo updateAddress(Long userId, AddressRequestDto.AddressUpdateRequest addressUpdateRequest);
 
     UserResponseDto.AccountInfo updateAccount(Long userId, UserRequestDto.AccountRequestDto requestDto);
 

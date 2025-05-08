@@ -2,7 +2,7 @@ package com.podmate.domain.user.application;
 
 import com.podmate.domain.address.domain.entity.Address;
 import com.podmate.domain.address.domain.repository.AddressRepository;
-import com.podmate.domain.address.dto.AddressRequestDto.UserAddressUpdateRequest;
+import com.podmate.domain.address.dto.AddressRequestDto.AddressUpdateRequest;
 import com.podmate.domain.review.domain.entity.Review;
 import com.podmate.domain.review.domain.entity.ReviewOptionMapping;
 import com.podmate.domain.review.domain.repository.ReviewOptionMappingRepository;
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto.AddressInfo updateAddress(Long userId, UserAddressUpdateRequest addressUpdateRequest) {
+    public UserResponseDto.AddressInfo updateAddress(Long userId, AddressUpdateRequest addressUpdateRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
 

@@ -105,7 +105,7 @@ public class User extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public Address updateAddress(AddressRequestDto.UserAddressUpdateRequest addressUpdateRequest,
+    public Address updateAddress(AddressRequestDto.AddressUpdateRequest addressUpdateRequest,
                               AddressRepository addressRepository){
         Address address = Address.builder()
                 .roadAddress(addressUpdateRequest.getRoadAddress())
