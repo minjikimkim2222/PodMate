@@ -7,7 +7,10 @@ import com.podmate.domain.orderForm.domain.entity.OrderForm;
 import com.podmate.domain.orderForm.domain.entity.OrderItem;
 import com.podmate.domain.orderForm.domain.repository.OrderFormRepository;
 import com.podmate.domain.orderForm.domain.repository.OrderItemRepository;
+import com.podmate.domain.orderForm.dto.OrderFormResponseDto.OrderFormDetailDto;
 import com.podmate.domain.orderForm.dto.OrderFormResponseDto.OrderFormListResponseDto;
+import com.podmate.domain.orderForm.exception.OrderFormAccessDeniedException;
+import com.podmate.domain.orderForm.exception.OrderFormNotFoundException;
 import com.podmate.domain.platformInfo.exception.PlatformAccessDeniedException;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.enums.Platform;
@@ -37,8 +40,7 @@ public class OrderFormServiceImpl implements OrderFormService{
     private final PodUserMappingRepository podUserMappingRepository;
     @Override
     public Long createOrderForm(Long userId, Long podId, List<Long> itemIds) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException());
+        User user = findUser(userId);
 
         Pod pod = podRepository.findById(podId)
                 .orElseThrow(() -> new PodNotFoundException());
@@ -63,12 +65,29 @@ public class OrderFormServiceImpl implements OrderFormService{
     }
     @Override
     public OrderFormListResponseDto getMyOrderForms(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException());
-
+        User user = findUser(userId);
         List<OrderForm> orderFormList = orderFormRepository.findAllByUser(user);
 
         return OrderFormConverter.toListResponseDto(orderFormList);
+    }
+
+    @Override
+    public OrderFormDetailDto getMyOrderFormDetail(Long userId, Long orderFormId) {
+        User user = findUser(userId);
+        OrderForm orderForm = orderFormRepository.findById(orderFormId)
+                .orElseThrow(() -> new OrderFormNotFoundException());
+
+        if (!orderForm.getUser().getId().equals(userId)){
+            throw new OrderFormAccessDeniedException();
+        }
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrderForm(orderForm);
+
+        return OrderFormConverter.toDetailResponseDto(orderItems, orderForm.getTotalAmount());
+    }
+
+    private User findUser(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
     }
 
     // 유저 권한 체크 (내 장바구니 맞는지)
