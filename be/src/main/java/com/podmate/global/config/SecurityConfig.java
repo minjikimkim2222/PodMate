@@ -49,6 +49,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/swagger-ui/**", "/v3/api-docs/**",
                                 "/oauth2/authorization/kakao", // 카카오 로그인 요청
                                 "/login/oauth2/code/**", // 카카오 인증 콜백
                                 "/api/refresh-token", // refresh token (토큰 갱신)
