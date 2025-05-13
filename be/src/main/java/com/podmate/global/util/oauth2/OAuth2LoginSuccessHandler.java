@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 
@@ -89,7 +90,17 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                         "refreshToken", refreshToken
                 )
         );
-        response.getWriter().write(body);
+        // response.getWriter().write(body);
+			String redirectUrl = UriComponentsBuilder
+        .fromUriString("http://localhost:5173/oauth/redirect") // ✅ 프론트 리디렉션 주소
+        .queryParam("status", "success")
+        .queryParam("accessToken", accessToken)
+        .queryParam("refreshToken", refreshToken)
+        .build()
+        .toUriString();
+
+response.sendRedirect(redirectUrl);
+
     }
 
 
