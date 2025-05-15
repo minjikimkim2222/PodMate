@@ -40,4 +40,11 @@ public class PodRequestDto {
         private int unitQuantity;
         private int unitPrice;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class GroupBuyJoinRequestDto{
+        private int quantity;
+    }
 }

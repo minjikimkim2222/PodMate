@@ -10,7 +10,9 @@ import com.podmate.global.common.code.status.SuccessStatus;
 import com.podmate.global.common.response.BaseResponse;
 import com.podmate.global.util.oauth2.dto.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,5 +69,11 @@ public class PodRestController {
         return BaseResponse.onSuccess(SuccessStatus._CREATED, addressId);
     }
 
+    //팟 신청하기(공동구매유형)
+    @PostMapping("/{podId}/join")
+    public BaseResponse<String> joinPod(@RequestBody PodRequestDto.GroupBuyJoinRequestDto request, @PathVariable Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
 
+        podService.joinPod(request, podId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._CREATED, "팟 신청이 완료되었습니다");
+    }
 }
