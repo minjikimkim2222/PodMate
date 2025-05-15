@@ -1,6 +1,6 @@
 package com.podmate.domain.mypage.application;
 
-import com.podmate.domain.delivery.DeliveryNotFoundException;
+import com.podmate.domain.delivery.exception.DeliveryNotFoundException;
 import com.podmate.domain.delivery.domain.entity.Delivery;
 import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
@@ -33,17 +33,13 @@ import com.podmate.domain.review.dto.ReviewResponseDto;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
 import com.podmate.domain.user.exception.UserNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 

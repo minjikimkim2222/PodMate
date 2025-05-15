@@ -1,4 +1,4 @@
-package com.podmate.domain.delivery;
+package com.podmate.domain.delivery.exception;
 
 import com.podmate.global.common.code.status.ErrorStatus;
 import com.podmate.global.exception.GeneralException;

@@ -23,6 +23,8 @@ public interface PodUserMappingRepository extends JpaRepository<PodUserMapping, 
 
     boolean existsByPod_IdAndUser_Id(Long podId, Long userId);
 
+    boolean existsByPod_IdAndUser_IdAndPodRole(Long podId, Long userId, PodRole podRole);
+
     //userId와 podRole로 repository에서 podId list 조회
     @Query("SELECT pum.pod.id FROM PodUserMapping pum WHERE pum.user.id = :userId AND pum.podRole = :podRole")
     List<Long> findPodIdsByUserIdAndRole(@Param("userId") Long userId, @Param("podRole") PodRole podRole);
