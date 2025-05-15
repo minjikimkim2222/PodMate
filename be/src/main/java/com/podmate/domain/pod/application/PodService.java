@@ -241,4 +241,25 @@ public class PodService {
         return savedAddress.getId();
     }
 
+    public void joinPod(PodRequestDto.GroupBuyJoinRequestDto request, Long podId, Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+        Pod pod = podRepository.findById(podId)
+                .orElseThrow(() -> new PodNotFoundException());
+
+        if(!podUserMappingRepository.existsByPod_IdAndUser_Id(pod.getId(), user.getId())){
+            throw new PodUserMappingNotFoundException();
+        }
+
+        PodUserMapping mapping = PodUserMapping.builder()
+                .pod(pod)
+                .user(user)
+                .isApproved(IsApproved.PENDING)
+                .podRole(PodRole.POD_MEMBER)
+                .groupBuyQuantity(request.getQuantity())
+                .build();
+
+        podUserMappingRepository.save(mapping);
+    }
+
 }
