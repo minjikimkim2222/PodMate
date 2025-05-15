@@ -76,4 +76,11 @@ public class PodRestController {
         podService.joinPod(request, podId, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._CREATED, "팟 신청이 완료되었습니다");
     }
+
+    //팟 상태 변경하기
+    @PatchMapping("/{podId}/status")
+    public BaseResponse<String> updatePodStatus(@PathVariable Long podId, @RequestBody PodRequestDto.ChangingInprogressStatus request, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        podService.updatePodStatus(podId, request, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK,"팟 상태가 성공적으로 변경되었습니다.");
+    }
 }

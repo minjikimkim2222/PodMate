@@ -203,4 +203,5 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private PodLeader podLeader;
         private String itemUrl;
     }
+
 }

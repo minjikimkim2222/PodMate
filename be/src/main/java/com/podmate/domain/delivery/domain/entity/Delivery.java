@@ -4,6 +4,7 @@ import com.podmate.domain.address.domain.entity.Address;
 import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.model.entity.BaseEntity;
 import com.podmate.domain.pod.domain.entity.Pod;
+import com.podmate.domain.pod.domain.enums.InprogressStatus;
 import com.podmate.domain.user.domain.enums.Role;
 import com.podmate.domain.user.domain.enums.SocialType;
 import com.podmate.domain.user.domain.enums.Status;
@@ -47,5 +48,9 @@ public class Delivery extends BaseEntity {
         this.courierCompany = courierCompany;
         this.pickupDeadline = pickupDeadline;
         this.deliveryStatus = deliveryStatus;
+    }
+
+    public void updateDeliveryStatus(DeliveryStatus status) {
+        this.deliveryStatus = status;
     }
 }

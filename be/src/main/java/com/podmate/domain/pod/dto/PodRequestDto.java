@@ -1,5 +1,6 @@
 package com.podmate.domain.pod.dto;
 
+import com.podmate.domain.pod.domain.enums.InprogressStatus;
 import com.podmate.domain.pod.domain.enums.Platform;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,5 +47,13 @@ public class PodRequestDto {
     @AllArgsConstructor
     public static class GroupBuyJoinRequestDto{
         private int quantity;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChangingInprogressStatus{
+        private String status;
     }
 }

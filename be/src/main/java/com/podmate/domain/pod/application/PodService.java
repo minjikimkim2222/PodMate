@@ -3,8 +3,12 @@ package com.podmate.domain.pod.application;
 import com.podmate.domain.address.domain.entity.Address;
 import com.podmate.domain.address.domain.repository.AddressRepository;
 import com.podmate.domain.address.dto.AddressRequestDto;
-import com.podmate.domain.address.dto.AddressRequestDto.AddressUpdateRequest;
 import com.podmate.domain.address.exception.AddressNotFoundException;
+import com.podmate.domain.delivery.exception.DeliveryNotFoundException;
+import com.podmate.domain.delivery.exception.ShippingMismatchException;
+import com.podmate.domain.delivery.domain.entity.Delivery;
+import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
+import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
 import com.podmate.domain.jjim.domain.entity.JJim;
 import com.podmate.domain.jjim.domain.repository.JJimRepository;
 import com.podmate.domain.pod.domain.entity.Pod;
@@ -13,6 +17,8 @@ import com.podmate.domain.pod.domain.repository.PodRepository;
 import com.podmate.domain.pod.dto.PodRequestDto;
 import com.podmate.domain.pod.dto.PodResponse;
 import com.podmate.domain.pod.dto.PodResponseDto;
+import com.podmate.domain.pod.exception.InvalidStatusException;
+import com.podmate.domain.pod.exception.PendingOrderMismatchException;
 import com.podmate.domain.pod.exception.PodNotFoundException;
 import com.podmate.domain.podUserMapping.domain.entity.PodUserMapping;
 import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
@@ -43,6 +49,7 @@ public class PodService {
     private final JJimRepository jjimRepository;
     private final PodUserMappingRepository podUserMappingRepository;
     private final AddressRepository addressRepository;
+    private final DeliveryRepository deliveryRepository;
 
     private static final int EARTH_RADIUS_KM = 6371; // 지구 반지름 (단위: km)
 
@@ -262,4 +269,36 @@ public class PodService {
         podUserMappingRepository.save(mapping);
     }
 
+    public void updatePodStatus(Long podId, PodRequestDto.ChangingInprogressStatus request, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+        Pod pod = podRepository.findById(podId)
+                .orElseThrow(() -> new PodNotFoundException());
+        Delivery delivery = deliveryRepository.findByPod_Id(pod.getId())
+                .orElseThrow(() -> new DeliveryNotFoundException());
+
+        if (!podUserMappingRepository.existsByPod_IdAndUser_IdAndPodRole(pod.getId(), user.getId(), PodRole.POD_LEADER)) {
+            throw new PodUserMappingNotFoundException();
+        }
+
+        InprogressStatus currentStatus = pod.getInprogressStatus();
+        String nextStatus = request.getStatus();
+
+        // 상태 전이 조건 검사
+        if ("ORDER_COMPLETED".equals(nextStatus)) {
+            if (currentStatus != InprogressStatus.PENDING_ORDER) {
+                throw new PendingOrderMismatchException();
+            }
+            pod.updateInprogressStatus(InprogressStatus.ORDER_COMPLETED);
+        }
+        else if("DELIVERED".equals(nextStatus)) {
+            if (delivery.getDeliveryStatus() != DeliveryStatus.SHIPPING){
+                throw new ShippingMismatchException();
+            }
+            delivery.updateDeliveryStatus(DeliveryStatus.DELIVERED);
+        }
+        else{
+            throw new InvalidStatusException();
+        }
+    }
 }

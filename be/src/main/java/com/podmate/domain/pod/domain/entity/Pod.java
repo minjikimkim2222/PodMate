@@ -119,4 +119,8 @@ public class Pod extends BaseEntity {
                 .platform(Platform.UNKNOWN)
                 .build();
     }
+
+    public void updateInprogressStatus(InprogressStatus status) {
+        this.inprogressStatus = status;
+    }
 }
