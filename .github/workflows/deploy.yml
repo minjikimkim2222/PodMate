@@ -53,10 +53,10 @@ jobs:
           echo "Deploying $LATEST_JAR to EC2..."
 
           # 빌드된 실행 가능 JAR만 EC2로 전송
-          # scp -v -i private_key.pem -o StrictHostKeyChecking=no "$LATEST_JAR" $USER@$HOST:$TARGET_DIR
+          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$LATEST_JAR" $USER@$HOST:$TARGET_DIR
           
           # EC2에 빌드된 jar랑, application-secret.yml 같이 보내기
-          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$LATEST_JAR" ./src/main/resources/application-secret.yml $USER@$HOST:$TARGET_DIR
+          # scp -v -i private_key.pem -o StrictHostKeyChecking=no "$LATEST_JAR" ./src/main/resources/application-secret.yml $USER@$HOST:$TARGET_DIR
 
       - name: Run Application on EC2
         env:
@@ -70,9 +70,6 @@ jobs:
           chmod 600 private_key.pem
 
           # EC2에서 기존 애플리케이션 종료 후 새 JAR 실행          
-          ssh -i private_key.pem -o StrictHostKeyChecking=no $USER@$HOST << EOF
-            mkdir -p /home/ubuntu/cicd/config
-            mv /home/ubuntu/cicd/application-secret.yml /home/ubuntu/cicd/config/
             pkill -f 'java -jar' || echo "No existing app running"
             nohup java -jar $TARGET_DIR/*.jar --spring.profiles.active=production > $TARGET_DIR/app.log 2>&1 &
           EOF
