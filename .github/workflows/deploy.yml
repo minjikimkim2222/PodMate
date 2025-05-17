@@ -1,10 +1,10 @@
 name: CI/CD Pipeline
 
 on:
-  #push:
-   # branches: [ develop ]
+  push:
+    branches: [ develop ]
   pull_request:
-    branches: [ develop ]  # PR로 develop 브랜치에 머지할 때만 트리거됨
+    branches: [ develop ]  # PR로 develop 브랜치에 머지, push할 때만 트리거됨
 
 jobs:
   build:
