@@ -48,6 +48,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.podmate.domain.pod.converter.PodConverter.*;
+import static com.podmate.domain.pod.domain.enums.InprogressStatus.ORDER_COMPLETED;
 import static com.podmate.domain.pod.domain.enums.InprogressStatus.RECRUITING;
 import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_LEADER;
 import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_MEMBER;
@@ -195,11 +196,12 @@ public class MyPageService {
                 .pod(pod)
                 .trackingNum(request.getTrackingNum())
                 .courierCompany(request.getCourierCompany())
-                .pickupDeadline(LocalDate.now().plusDays(5)) //오늘로부터 5일 뒤
                 .deliveryStatus(DeliveryStatus.SHIPPING)
                 .build();
 
         deliveryRepository.save(delivery);
+
+        pod.updateInprogressStatus(ORDER_COMPLETED);
     }
 
     public List<PodResponse> getCompletedMyPods(Long userId) {

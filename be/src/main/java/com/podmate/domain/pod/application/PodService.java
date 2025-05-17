@@ -29,9 +29,11 @@ import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
 import com.podmate.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -299,6 +301,21 @@ public class PodService {
         }
         else{
             throw new InvalidStatusException();
+        }
+    }
+
+    //15초마다 배송 pickupDeadline 완료된거 있는지 점검
+    @Scheduled(fixedRate = 15000)
+    public void checkAndCompletePods() {
+        // 1. 배송 완료 상태이고 픽업 마감 기한이 지난 Delivery들 조회
+        List<Delivery> deliveries = deliveryRepository
+                .findAllByDeliveryStatusAndPickupDeadlineBefore(DeliveryStatus.DELIVERED, LocalDateTime.now());
+
+        for (Delivery delivery : deliveries) {
+            Pod pod = delivery.getPod();
+            if (pod != null && pod.getPodStatus() != PodStatus.COMPLETED) {
+                pod.updatePodStatus(PodStatus.COMPLETED);
+            }
         }
     }
 }
