@@ -36,8 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-### application.yml 추가
-application.yml
 
 ### dataSources.xml 추가
 .idea/dataSources.xml

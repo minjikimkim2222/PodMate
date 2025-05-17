@@ -26,7 +26,7 @@ jobs:
 
       - name: Make application-secret.yml
         run: |
-          touch ./src/main/resources/application-secret.yml
+          mkdir -p ./src/main/resources
           echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application-secret.yml
         shell: bash
 
@@ -41,15 +41,15 @@ jobs:
           PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           HOST: ${{ secrets.EC2_HOST }}
           USER: ubuntu
-          TARGET_DIR: /home/ubuntu/cicd/
+          TARGET_DIR: /home/ubuntu/cicd/ # 배포할 디렉터리
         run: |
           # SSH 키 저장 (줄바꿈 유지)
           printf "%s\n" "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
           chmod 600 private_key.pem
           
           # 가장 최근 빌드된 실행 가능한 JAR 찾기
-          LATEST_JAR=$(ls -t build/libs/*.jar | grep -v 'plain' | head -n 1)
-
+          LATEST_JAR=$(ls -t build/libs/*.jar | grep -v 'plain' | head -n 1) # plain.jar 제외
+          
           echo "Deploying $LATEST_JAR to EC2..."
 
           # 빌드된 실행 가능 JAR만 EC2로 전송
@@ -66,8 +66,8 @@ jobs:
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
 
-          # EC2에서 기존 애플리케이션 종료 후 새 JAR 실행
+          # EC2에서 기존 애플리케이션 종료 후 새 JAR 실행          
           ssh -i private_key.pem -o StrictHostKeyChecking=no $USER@$HOST << EOF
             pkill -f 'java -jar' || echo "No existing app running"
-            nohup java -jar $TARGET_DIR/*.jar > $TARGET_DIR/app.log 2>&1 &
+            nohup java -jar --spring.profiles.active=production $TARGET_DIR/*.jar > $TARGET_DIR/app.log 2>&1 &
           EOF
