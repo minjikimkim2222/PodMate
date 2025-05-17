@@ -1,0 +1,1 @@
+cicd 배포를 위해, src/main/resources 인식해주기 위해 추가했어요
