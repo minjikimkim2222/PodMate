@@ -74,4 +74,7 @@ public class PodUserMapping extends BaseEntity {
         return mapping;
     }
 
+    public void updatePodUserMappingIsApproved(IsApproved isApproved) {
+        this.isApproved = isApproved;
+    }
 }
