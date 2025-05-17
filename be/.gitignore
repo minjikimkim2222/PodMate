@@ -42,3 +42,6 @@ application.yml
 ### dataSources.xml 추가
 .idea/dataSources.xml
 .idea/
+
+### cicd env 추가 - application-secret.yml 노출되면 안됨!! 요금 폭탄 !! ###
+src/main/resources/application-secret.yml
