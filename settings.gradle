@@ -1,2 +1,2 @@
 rootProject.name = 'PodMate'
-include 'be', 'fe'
+include 'be' // , 'fe' # fe 프로젝트 빌드 시간 단축용

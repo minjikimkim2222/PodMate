@@ -33,8 +33,8 @@ jobs:
       - name: Build with Gradle Wrapper (Skip Tests)
         run: |
           ./gradlew --stop && ./gradlew clean --refresh-dependencies
-          ./gradlew clean bootJar -x test  
-          ls -l build/libs 
+          ./gradlew :be:clean :be:bootJar -x test  
+          ls -l be/build/libs 
 
       - name: Deploy JAR to EC2
         env:
@@ -48,7 +48,7 @@ jobs:
           chmod 600 private_key.pem
           
           # 가장 최근 빌드된 실행 가능한 JAR 찾기
-          LATEST_JAR=$(ls -t build/libs/*.jar | grep -v 'plain' | head -n 1) # plain.jar 제외
+          LATEST_JAR=$(ls -t be/build/libs/*.jar | grep -v 'plain' | head -n 1) # plain.jar 제외
           
           echo "Deploying $LATEST_JAR to EC2..."
 
