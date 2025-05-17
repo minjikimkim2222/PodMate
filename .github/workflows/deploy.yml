@@ -27,7 +27,7 @@ jobs:
       - name: Make application-secret.yml
         run: |
           mkdir -p ./src/main/resources
-          echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application-secret.yml
+          echo "${{ secrets.APPLICATION_SECRET }}" > .be/src/main/resources/application-secret.yml
         shell: bash
 
       - name: Build with Gradle Wrapper (Skip Tests)
