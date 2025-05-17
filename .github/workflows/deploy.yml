@@ -1,0 +1,73 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]  # PR로 develop 브랜치에 머지, push할 때만 트리거됨
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Make application-secret.yml
+        run: |
+          touch ./src/main/resources/application-secret.yml
+          echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application-secret.yml
+        shell: bash
+
+      - name: Build with Gradle Wrapper (Skip Tests)
+        run: |
+          ./gradlew --stop && ./gradlew clean --refresh-dependencies
+          ./gradlew clean bootJar -x test  
+          ls -l build/libs 
+
+      - name: Deploy JAR to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ubuntu
+          TARGET_DIR: /home/ubuntu/cicd/
+        run: |
+          # SSH 키 저장 (줄바꿈 유지)
+          printf "%s\n" "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          
+          # 가장 최근 빌드된 실행 가능한 JAR 찾기
+          LATEST_JAR=$(ls -t build/libs/*.jar | grep -v 'plain' | head -n 1)
+
+          echo "Deploying $LATEST_JAR to EC2..."
+
+          # 빌드된 실행 가능 JAR만 EC2로 전송
+          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$LATEST_JAR" $USER@$HOST:$TARGET_DIR
+
+      - name: Run Application on EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ubuntu
+          TARGET_DIR: /home/ubuntu/cicd/
+
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+
+          # EC2에서 기존 애플리케이션 종료 후 새 JAR 실행
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $USER@$HOST << EOF
+            pkill -f 'java -jar' || echo "No existing app running"
+            nohup java -jar $TARGET_DIR/*.jar > $TARGET_DIR/app.log 2>&1 &
+          EOF

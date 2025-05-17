@@ -38,3 +38,7 @@ out/
 
 ### application.yml 추가
 application.yml
+
+### dataSources.xml 추가
+.idea/dataSources.xml
+.idea/
