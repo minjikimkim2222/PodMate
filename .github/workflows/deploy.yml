@@ -53,7 +53,10 @@ jobs:
           echo "Deploying $LATEST_JAR to EC2..."
 
           # 빌드된 실행 가능 JAR만 EC2로 전송
-          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$LATEST_JAR" $USER@$HOST:$TARGET_DIR
+          # scp -v -i private_key.pem -o StrictHostKeyChecking=no "$LATEST_JAR" $USER@$HOST:$TARGET_DIR
+          
+          # EC2에 빌드된 jar랑, application-secret.yml 같이 보내기
+          scp -v -i private_key.pem -o StrictHostKeyChecking=no "$LATEST_JAR" ./src/main/resources/application-secret.yml $USER@$HOST:$TARGET_DIR
 
       - name: Run Application on EC2
         env:
