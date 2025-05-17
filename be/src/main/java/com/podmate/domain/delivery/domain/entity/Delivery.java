@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -37,13 +38,13 @@ public class Delivery extends BaseEntity {
     private String courierCompany;  //택배사
 
     @Column(nullable = true)
-    private LocalDate pickupDeadline;   //픽업 기한     deliveryStatus가 DELIVERED가 되면 현재로부터 5일 후로 업데이트
+    private LocalDateTime pickupDeadline;   //픽업 기한     deliveryStatus가 DELIVERED가 되면 현재로부터 5일 후로 업데이트
 
     @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus;  //배송 상태
 
     @Builder
-    public Delivery(Pod pod, String trackingNum, String courierCompany, LocalDate pickupDeadline, DeliveryStatus deliveryStatus) {
+    public Delivery(Pod pod, String trackingNum, String courierCompany, LocalDateTime pickupDeadline, DeliveryStatus deliveryStatus) {
         this.pod = pod;
         this.trackingNum = trackingNum;
         this.courierCompany = courierCompany;
@@ -53,5 +54,9 @@ public class Delivery extends BaseEntity {
 
     public void updateDeliveryStatus(DeliveryStatus status) {
         this.deliveryStatus = status;
+        if (status == DeliveryStatus.DELIVERED) {
+            this.pickupDeadline = LocalDateTime.now().plusSeconds(10);
+        }
+        //this.pickupDeadline = LocalDateTime.now().plusDays(5); // 5일 뒤로 설정
     }
 }
