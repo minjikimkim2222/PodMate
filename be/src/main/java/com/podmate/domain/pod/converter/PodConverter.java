@@ -1,9 +1,15 @@
 package com.podmate.domain.pod.converter;
 
+import com.podmate.domain.orderForm.domain.entity.OrderForm;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.dto.PodResponseDto;
+import com.podmate.domain.podUserMapping.domain.entity.PodUserMapping;
 import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
 import com.podmate.domain.user.domain.entity.User;
+
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 public class PodConverter {
     public static PodResponseDto.Minimum buildMinimumPodResponseDto(Pod pod, boolean isJJim) {
@@ -101,24 +107,39 @@ public class PodConverter {
                 .build();
     }
 
-    public static PodResponseDto.MinimumPodMember buildMinimumPodMemberResponseDto(User member, IsApproved isApproved) {
-        return PodResponseDto.MinimumPodMember.builder()
+    public static PodResponseDto.MMinimumPodMember buildMinimumPodMemberResponseDto(User member, OrderForm orderForm, IsApproved isApproved) {
+        PodResponseDto.MemberProfile memberProfile = PodResponseDto.MemberProfile.builder()
                 .userId(member.getId())
                 .nickname(member.getNickname())
                 .profileImageUrl(member.getProfileImage())
-                //.totalAmount()  <-- orderForm의 총 주문 금액
                 .mannerScore(member.getMannerScore())
-                .isApproved(isApproved.name())
+                .isApproved(isApproved.toString())
                 .build();
+        PodResponseDto.OrderItem orderItem = PodResponseDto.OrderItem.builder()
+                .orderformId(orderForm.getId())
+                .totalAmount(orderForm.getTotalAmount())
+                .build();
+
+        return PodResponseDto.MMinimumPodMember.builder()
+                .memberProfile(memberProfile)
+                .orderItem(orderItem)
+                .build();
+
+
     }
 
-    public static PodResponseDto.PodMember buildPodMemberResponseDto(User member, IsApproved isApproved) {
-        return PodResponseDto.PodMember.builder()
+    public static PodResponseDto.PodMember buildGroupBuyPodMemberResponseDto(User member, PodUserMapping mapping) {
+        PodResponseDto.MemberProfile memberProfile = PodResponseDto.MemberProfile.builder()
                 .userId(member.getId())
                 .nickname(member.getNickname())
                 .profileImageUrl(member.getProfileImage())
                 .mannerScore(member.getMannerScore())
-                .isApproved(isApproved.name())
+                .isApproved(mapping.getIsApproved().toString())
+                .build();
+
+        return PodResponseDto.PodMember.builder()
+                .memberProfile(memberProfile)
+                .groupBuyQuantity(Optional.ofNullable(mapping.getGroupBuyQuantity()).orElse(0))
                 .build();
     }
 

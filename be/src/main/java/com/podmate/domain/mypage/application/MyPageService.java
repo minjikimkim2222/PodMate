@@ -5,13 +5,16 @@ import com.podmate.domain.delivery.domain.entity.Delivery;
 import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
 import com.podmate.domain.mypage.dto.MyPageRequestDto;
+import com.podmate.domain.mypage.exception.PodStatusNotRecruitingException;
 import com.podmate.domain.orderForm.converter.OrderFormConverter;
 import com.podmate.domain.orderForm.domain.entity.OrderForm;
 import com.podmate.domain.orderForm.domain.entity.OrderItem;
 import com.podmate.domain.orderForm.domain.repository.OrderFormRepository;
 import com.podmate.domain.orderForm.domain.repository.OrderItemRepository;
 import com.podmate.domain.orderForm.dto.OrderFormResponseDto;
+import com.podmate.domain.orderForm.exception.OrderFormNotFoundException;
 import com.podmate.domain.pod.domain.entity.Pod;
+import com.podmate.domain.pod.domain.enums.InprogressStatus;
 import com.podmate.domain.pod.domain.enums.PodStatus;
 import com.podmate.domain.pod.domain.enums.PodType;
 import com.podmate.domain.pod.domain.repository.PodRepository;
@@ -21,6 +24,7 @@ import com.podmate.domain.pod.exception.PodStatusMismatchException;
 import com.podmate.domain.pod.exception.PodNotFoundException;
 import com.podmate.domain.pod.exception.PodTypeNotFoundException;
 import com.podmate.domain.podUserMapping.domain.entity.PodUserMapping;
+import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
 import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.podUserMapping.domain.repository.PodUserMappingRepository;
 import com.podmate.domain.podUserMapping.exception.PodLeaderNotFoundException;
@@ -44,6 +48,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.podmate.domain.pod.converter.PodConverter.*;
+import static com.podmate.domain.pod.domain.enums.InprogressStatus.RECRUITING;
 import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_LEADER;
 import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_MEMBER;
 
@@ -113,12 +118,14 @@ public class MyPageService {
         List<User> members = podUserMappingRepository.findMembersByPodId(podId);
 
         if (pod.getPodType() == PodType.MINIMUM) {
-            List<PodResponseDto.MinimumPodMember> podMembers = members.stream()
+            List<PodResponseDto.MMinimumPodMember> podMembers = members.stream()
                     .map(member -> {
                         PodUserMapping mapping = podUserMappingRepository
                                 .findByPod_IdAndUser_IdAndPodRole(podId, member.getId(), POD_MEMBER)
                                 .orElseThrow(PodUserMappingNotFoundException::new);
-                        return buildMinimumPodMemberResponseDto(member, mapping.getIsApproved());
+                        OrderForm orderForm = mapping.getOrderForm();
+
+                        return buildMinimumPodMemberResponseDto(member, orderForm, mapping.getIsApproved());
                     }).toList();
 
             return PodResponseDto.MinimumPodMembers.builder()
@@ -132,7 +139,7 @@ public class MyPageService {
                         PodUserMapping mapping = podUserMappingRepository
                                 .findByPod_IdAndUser_IdAndPodRole(podId, member.getId(), POD_MEMBER)
                                 .orElseThrow(PodUserMappingNotFoundException::new);
-                        return buildPodMemberResponseDto(member, mapping.getIsApproved());
+                        return buildGroupBuyPodMemberResponseDto(member, mapping);
                     }).toList();
 
             return PodResponseDto.GroupBuyPodMembers.builder()
@@ -180,7 +187,7 @@ public class MyPageService {
         return OrderFormConverter.toDetailResponseDto(orderItems, orderForm.getTotalAmount());
     }
 
-    public void addTrackingNum(MyPageRequestDto request, Long podId, Long userId){
+    public void addTrackingNum(MyPageRequestDto.TrackingNumRequestDto request, Long podId, Long userId){
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         Pod pod = podRepository.findById(podId).orElseThrow(() -> new PodNotFoundException());
 
@@ -355,6 +362,44 @@ public class MyPageService {
                 .profile(profile)
                 .reviews(reviews)
                 .build();
+    }
 
+    public void podAcceptReject (MyPageRequestDto.IsApprovedStatusRequestDto request, Long podId, Long memberId, Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        User member = userRepository.findById(memberId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        Pod pod = podRepository.findById(podId)
+                .orElseThrow(() -> new PodNotFoundException());
+
+        if (pod.getInprogressStatus() != RECRUITING) {
+            throw new PodStatusNotRecruitingException();
+        }
+
+        PodUserMapping mapping = podUserMappingRepository
+                .findByPod_IdAndUser_IdAndPodRole(podId, member.getId(), POD_MEMBER)
+                .orElseThrow(PodUserMappingNotFoundException::new);
+
+        IsApproved isAccepted = IsApproved.valueOf(request.getIsApprovedStatus());
+        mapping.updatePodUserMappingIsApproved(isAccepted);
+
+        if (isAccepted == IsApproved.ACCEPTED) {
+            if (pod.getPodType() == PodType.MINIMUM) {
+                OrderForm orderForm = mapping.getOrderForm();
+                if (orderForm == null) {
+                    throw new OrderFormNotFoundException();
+                }
+                pod.increaseCurrentAmount(orderForm.getTotalAmount());
+            } else if (pod.getPodType() == PodType.GROUP_BUY) {
+                pod.increaseCurrentAmount(1);
+            }
+        }
+
+        // 목표 수량 도달 시 상태 변경
+        if (pod.getCurrentAmount() >= pod.getGoalAmount()) {
+            pod.updateInprogressStatus(InprogressStatus.PENDING_ORDER);
+        }
     }
 }
