@@ -68,8 +68,9 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-
+          
           # EC2에서 기존 애플리케이션 종료 후 새 JAR 실행          
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $USER@$HOST << EOF
             pkill -f 'java -jar' || echo "No existing app running"
             nohup java -jar $TARGET_DIR/*.jar --spring.profiles.active=production > $TARGET_DIR/app.log 2>&1 &
           EOF
