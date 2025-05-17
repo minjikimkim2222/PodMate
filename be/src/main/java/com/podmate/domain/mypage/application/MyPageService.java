@@ -11,6 +11,7 @@ import com.podmate.domain.orderForm.domain.entity.OrderItem;
 import com.podmate.domain.orderForm.domain.repository.OrderFormRepository;
 import com.podmate.domain.orderForm.domain.repository.OrderItemRepository;
 import com.podmate.domain.orderForm.dto.OrderFormResponseDto;
+import com.podmate.domain.orderForm.exception.OrderFormNotFoundException;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.enums.PodStatus;
 import com.podmate.domain.pod.domain.enums.PodType;
@@ -113,12 +114,14 @@ public class MyPageService {
         List<User> members = podUserMappingRepository.findMembersByPodId(podId);
 
         if (pod.getPodType() == PodType.MINIMUM) {
-            List<PodResponseDto.MinimumPodMember> podMembers = members.stream()
+            List<PodResponseDto.MMinimumPodMember> podMembers = members.stream()
                     .map(member -> {
                         PodUserMapping mapping = podUserMappingRepository
                                 .findByPod_IdAndUser_IdAndPodRole(podId, member.getId(), POD_MEMBER)
                                 .orElseThrow(PodUserMappingNotFoundException::new);
-                        return buildMinimumPodMemberResponseDto(member, mapping.getIsApproved());
+                        OrderForm orderForm = mapping.getOrderForm();
+
+                        return buildMinimumPodMemberResponseDto(member, orderForm, mapping.getIsApproved());
                     }).toList();
 
             return PodResponseDto.MinimumPodMembers.builder()
@@ -132,7 +135,7 @@ public class MyPageService {
                         PodUserMapping mapping = podUserMappingRepository
                                 .findByPod_IdAndUser_IdAndPodRole(podId, member.getId(), POD_MEMBER)
                                 .orElseThrow(PodUserMappingNotFoundException::new);
-                        return buildPodMemberResponseDto(member, mapping.getIsApproved());
+                        return buildGroupBuyPodMemberResponseDto(member, mapping);
                     }).toList();
 
             return PodResponseDto.GroupBuyPodMembers.builder()

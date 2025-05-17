@@ -50,10 +50,10 @@ public class PodUserMapping extends BaseEntity {
     private PodRole podRole;
 
     @Column(nullable = true)
-    private int groupBuyQuantity;
+    private Integer groupBuyQuantity;
 
     @Builder
-    private PodUserMapping(Pod pod, User user, IsApproved isApproved, PodRole podRole, int groupBuyQuantity) {
+    private PodUserMapping(Pod pod, User user, IsApproved isApproved, PodRole podRole, Integer groupBuyQuantity) {
         this.pod = pod;
         this.user = user;
         this.isApproved = isApproved;
