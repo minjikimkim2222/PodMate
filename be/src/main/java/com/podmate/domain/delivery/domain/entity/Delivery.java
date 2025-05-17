@@ -36,6 +36,7 @@ public class Delivery extends BaseEntity {
     @Column(nullable = false)
     private String courierCompany;  //택배사
 
+    @Column(nullable = true)
     private LocalDate pickupDeadline;   //픽업 기한     deliveryStatus가 DELIVERED가 되면 현재로부터 5일 후로 업데이트
 
     @Enumerated(EnumType.STRING)
