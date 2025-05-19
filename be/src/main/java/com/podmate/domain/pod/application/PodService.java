@@ -301,4 +301,25 @@ public class PodService {
             throw new InvalidStatusException();
         }
     }
+
+    // 위경도 범위로 팟 조회
+    public List<PodResponse> getPodsInBounds(
+            double lat1, double lng1, double lat2, double lng2, Long userId
+    ){
+        // 1. 위도/경도 정렬
+        double minLat = Math.min(lat1, lat2);
+        double maxLat = Math.max(lat1, lat2);
+        double minLng = Math.min(lng1, lng2);
+        double maxLng = Math.max(lng1, lng2);
+
+        List<Pod> pods = podRepository.findByAddressInBounds(
+                minLat, maxLat, minLng, maxLng
+        );
+
+        Set<Long> jJimPodIds = getJJimPodIds(userId);
+
+        return pods.stream()
+                .map(pod -> mapToPodResponseDto(pod, jJimPodIds))
+                .collect(Collectors.toList());
+    }
 }
