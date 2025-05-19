@@ -83,4 +83,19 @@ public class PodRestController {
         podService.updatePodStatus(podId, request, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK,"팟 상태가 성공적으로 변경되었습니다.");
     }
+
+    // 메인 - 지도에서 팟 위치 가져오기
+    @GetMapping("/map")
+    public BaseResponse<List<PodResponse>> getPodsInBounds(
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            @RequestParam double lat1,
+            @RequestParam double lng1,
+            @RequestParam double lat2,
+            @RequestParam double lng2
+    ){
+        List<PodResponse> podListInBounds = podService.getPodsInBounds(lat1, lng1, lat2, lng2,
+                customOAuth2User.getUserId());
+
+        return BaseResponse.onSuccess(SuccessStatus._OK, podListInBounds);
+    }
 }
