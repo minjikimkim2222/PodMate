@@ -308,7 +308,7 @@ public class PodService {
     // 위경도 범위로 팟 조회
     public List<PodResponse> getPodsInBounds(
             double lat1, double lng1, double lat2, double lng2, Long userId
-    ){
+    ) {
         // 1. 위도/경도 정렬
         double minLat = Math.min(lat1, lat2);
         double maxLat = Math.max(lat1, lat2);
@@ -324,6 +324,9 @@ public class PodService {
         return pods.stream()
                 .map(pod -> mapToPodResponseDto(pod, jJimPodIds))
                 .collect(Collectors.toList());
+    }
+
+
 
     //15초마다 배송 pickupDeadline 완료된거 있는지 점검
     @Scheduled(fixedRate = 15000)
