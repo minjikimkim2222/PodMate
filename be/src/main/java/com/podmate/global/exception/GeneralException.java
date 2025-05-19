@@ -1,5 +1,6 @@
 package com.podmate.global.exception;
 
+
 import com.podmate.global.common.code.BaseErrorCode;
 
 public abstract class GeneralException extends RuntimeException{

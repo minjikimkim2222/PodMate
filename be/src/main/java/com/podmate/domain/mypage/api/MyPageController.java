@@ -48,6 +48,13 @@ public class MyPageController {
         return BaseResponse.onSuccess(SuccessStatus._OK, inprogressMembers);
     }
 
+    //팟장의 팟원 신청 수락/거절
+    @PatchMapping("/inprogress/mypods/{podId}/podmembers/{memberId}/status")
+    public BaseResponse<String> podAcceptReject(@RequestBody MyPageRequestDto.IsApprovedStatusRequestDto request, @PathVariable("podId") Long podId, @PathVariable("memberId") Long memberId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        myPageService.podAcceptReject(request, podId, memberId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, "successfully changed isApproved status!");
+    }
+
     //나의 팟에서 팟원의 주문서 상세 보기
     @GetMapping("/mypods/{podId}/{memberId}/order")
     public BaseResponse<OrderFormResponseDto.OrderFormDetailDto> getMyPodOrderFrom(@PathVariable("podId") Long podId, @PathVariable("memberId") Long memberId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
@@ -57,7 +64,7 @@ public class MyPageController {
 
     //운송장 입력
     @PostMapping("/inprogress/mypods/{podId}")
-    public BaseResponse<String> addTrackingNumber(@RequestBody MyPageRequestDto request, @PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+    public BaseResponse<String> addTrackingNumber(@RequestBody MyPageRequestDto.TrackingNumRequestDto request, @PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         myPageService.addTrackingNum(request, podId, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, "successfully saved tracking number!");
     }

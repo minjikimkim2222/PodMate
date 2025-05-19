@@ -123,4 +123,12 @@ public class Pod extends BaseEntity {
     public void updateInprogressStatus(InprogressStatus status) {
         this.inprogressStatus = status;
     }
+
+    public void increaseCurrentAmount(int currentAmount) {
+        this.currentAmount += currentAmount;
+    }
+
+    public void updatePodStatus(PodStatus status) {
+        this.podStatus = status;
+    }
 }

@@ -1,5 +1,6 @@
 package com.podmate.domain.pod.dto;
 
+import com.fasterxml.classmate.AnnotationOverrides;
 import com.podmate.domain.delivery.domain.entity.Delivery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -144,7 +145,7 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
     @AllArgsConstructor
     public static class MinimumPodMembers implements PodResponse{
         private Long podId;
-        private List<MinimumPodMember> podMembers;
+        private List<MMinimumPodMember> podMembers;
     }
 
     @Builder
@@ -162,6 +163,33 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
     @Builder
     @Getter
     @AllArgsConstructor
+    public static class MMinimumPodMember{
+        private MemberProfile memberProfile;
+        private OrderItem orderItem;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class MemberProfile {
+        private Long userId;
+        private String nickname;
+        private String profileImageUrl;
+        private double mannerScore;
+        private String isApproved;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class OrderItem {
+        private Long orderformId;
+        private int totalAmount;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
     public static class GroupBuyPodMembers implements PodResponse{
         private Long podId;
         private String itemUrl;
@@ -172,11 +200,8 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
     @Getter
     @AllArgsConstructor
     public static class PodMember{
-        private Long userId;
-        private String nickname;
-        private String profileImageUrl;
-        private double mannerScore;
-        private String isApproved;
+        private MemberProfile memberProfile;
+        private int groupBuyQuantity;
     }
 
     @Builder
