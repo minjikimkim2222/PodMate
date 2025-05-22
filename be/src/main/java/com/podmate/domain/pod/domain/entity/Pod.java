@@ -62,11 +62,11 @@ public class Pod extends BaseEntity {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    private Integer totalAmount;    //필요한게 맞는지 아닌지..
+    private Integer totalAmount;    //전체 개수
 
-    private Integer unitQuantity;
+    private Integer unitQuantity;   //단위 개수
 
-    private Integer unitPrice;
+    private Integer unitPrice;      //단위 가격
 
     @Builder
     private Pod(String podName, PodType podType, PodStatus podStatus, InprogressStatus inprogressStatus, LocalDate deadline, Platform platform,
@@ -102,7 +102,7 @@ public class Pod extends BaseEntity {
                 .build();
     }
 
-    public static Pod createGroupBuyPod(String name, LocalDate deadline, int goalAmount, String description, Address address, String itemUrl, int unitQuantity, int unitPrice) {
+    public static Pod createGroupBuyPod(String name, LocalDate deadline, String description, Address address, String itemUrl, int totalAmount, int unitQuantity, int unitPrice) {
         return Pod.builder()
                 .podName(name)
                 .podType(PodType.GROUP_BUY)
@@ -110,10 +110,11 @@ public class Pod extends BaseEntity {
                 .inprogressStatus(InprogressStatus.RECRUITING)
                 .deadline(deadline)
                 .currentAmount(0)
-                .goalAmount(goalAmount)
+                .goalAmount(totalAmount/unitQuantity)
                 .description(description)
                 .address(address)
                 .itemUrl(itemUrl)
+                .totalAmount(totalAmount)
                 .unitQuantity(unitQuantity)
                 .unitPrice(unitPrice)
                 .platform(Platform.UNKNOWN)
