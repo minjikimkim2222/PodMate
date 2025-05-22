@@ -34,17 +34,17 @@ public class PodRequestDto {
         private String podName;
         private Long addressId;
         private LocalDate deadline;
-        private int goalAmount;     //목표 금액 or 모집 인원
         private String description;
-        private int totalAmount;  //전체 금액이 공동구매 유형에서 필요한가
+        private int totalAmount;    //전체 개수
         private String itemUrl;
-        private int unitQuantity;
-        private int unitPrice;
+        private int unitQuantity;   //단위 개수
+        private int unitPrice;      //단위 가격
     }
 
     @Getter
     @Builder
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class GroupBuyJoinRequestDto{
         private int quantity;
     }

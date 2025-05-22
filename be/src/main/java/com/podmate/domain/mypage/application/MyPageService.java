@@ -395,7 +395,7 @@ public class MyPageService {
                 }
                 pod.increaseCurrentAmount(orderForm.getTotalAmount());
             } else if (pod.getPodType() == PodType.GROUP_BUY) {
-                pod.increaseCurrentAmount(1);
+                pod.increaseCurrentAmount(mapping.getGroupBuyQuantity());
             }
         }
 
