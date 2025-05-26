@@ -205,6 +205,8 @@ public class MyPageService {
         deliveryRepository.save(delivery);
 
         pod.updateInprogressStatus(ORDER_COMPLETED);
+
+        notificationService.notifyDeliveryStarted(userId, pod);
     }
 
     public List<PodResponse> getCompletedMyPods(Long userId) {
