@@ -50,6 +50,20 @@ dependencies {
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
+    //  Selenium -> 동적 크롤링 도구 (공식문서에서 chrome 137과 호환되는 가장 최신버전 확인 - 4.33.0)
+    //implementation 'org.seleniumhq.selenium:selenium-java:4.15.0' <- 한번 되었을 때 버전..
+    implementation 'org.seleniumhq.selenium:selenium-java:4.33.0'
+
+
+    //  WebDriverManager -> ChromeDriver 수동설치 안해도 됨, 시스템에 설치된 Chrome 버전에 맞는 ChromeDriver 자동 설치, 다운로드
+    implementation("io.github.bonigarcia:webdrivermanager:5.8.0") // 한번 되었을 때, 5.8.0
+
+    // ✅ Force safe commons-io version to avoid vulnerabilities
+ //   implementation 'commons-io:commons-io:2.15.1'
+
+
+
+
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
