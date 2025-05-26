@@ -301,7 +301,7 @@ public class PodService {
                 throw new ShippingMismatchException();
             }
             delivery.updateDeliveryStatus(DeliveryStatus.DELIVERED);
-            notificationService.notifyReviewRequest(user.getId(), pod);
+            notificationService.notifyDeliveryArrived(user.getId(), pod);
         }
         else{
             throw new InvalidStatusException();
@@ -330,8 +330,6 @@ public class PodService {
                 .collect(Collectors.toList());
     }
 
-
-
     //15초마다 배송 pickupDeadline 완료된거 있는지 점검 -> log가 자주 떠서 10분으로 변경
     @Scheduled(fixedRate = 600000)
     public void checkAndCompletePods() {
@@ -343,6 +341,13 @@ public class PodService {
             Pod pod = delivery.getPod();
             if (pod != null && pod.getPodStatus() != PodStatus.COMPLETED) {
                 pod.updatePodStatus(PodStatus.COMPLETED);
+
+                // 팟원 목록 조회
+                List<User> receivers = podUserMappingRepository.findMembersByPodId(pod.getId());
+
+                for (User receiver : receivers) {
+                    notificationService.notifyReviewRequest(receiver.getId(), pod);
+                }
             }
         }
 

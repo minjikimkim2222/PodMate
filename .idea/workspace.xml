@@ -5,8 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad1aa387-a2b6-4ccb-a59e-292882510bfd" name="Changes" comment="commit">
-      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/mypage/application/MyPageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/mypage/application/MyPageService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.4/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/notification/application/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/notification/application/NotificationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/pod/application/PodService.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/pod/application/PodService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/global/util/oauth2/OAuth2LoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/global/util/oauth2/OAuth2LoginSuccessHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -240,7 +248,7 @@
       <workItem from="1748193627397" duration="17000" />
       <workItem from="1748230971048" duration="2000" />
       <workItem from="1748236936967" duration="11637000" />
-      <workItem from="1748263873790" duration="13270000" />
+      <workItem from="1748263873790" duration="14559000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />

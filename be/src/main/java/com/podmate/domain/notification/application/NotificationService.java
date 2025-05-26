@@ -161,6 +161,16 @@ public class NotificationService {
         sendNotification(receiver, content, DELIVERY_STARTED, "deliveryStarted", relatedUrl);
     }
 
+    // 팟장이 배송 완료 상태로 변경
+    public void notifyDeliveryArrived(Long userId, Pod pod) {
+        User receiver = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        String content = pod.getPodName() + " 팟의 주문 상품이 배송 완료 되었습니다.";
+        String relatedUrl = "/api/mypage/inprogress/joinedpods";
+
+        sendNotification(receiver, content, DELIVERY_ARRIVED, "deliveryArrived", relatedUrl);
+    }
     // 주요 알림 기능
     public void sendNotification(User receiver, String content, NotificationType type, String eventName, String relatedUrl) {
         if (!NotificationController.sseEmitters.containsKey(receiver.getId())) return;
