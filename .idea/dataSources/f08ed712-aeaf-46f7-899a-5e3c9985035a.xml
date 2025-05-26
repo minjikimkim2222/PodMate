@@ -1089,7 +1089,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="291" parent="1" name="podmate">
-      <LastIntrospectionLocalTimestamp>2025-05-26.07:11:46</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-05-26.15:08:31</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="292" parent="1" name="sys">
@@ -1384,7 +1384,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="358" parent="303" name="noti_id">
-      <AutoIncrement>2</AutoIncrement>
+      <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>bigint|0s</StoredType>
@@ -1404,7 +1404,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     </column>
     <column id="362" parent="303" name="notification_type">
       <Position>5</Position>
-      <StoredType>enum(&apos;APPLICATION_RESULT&apos;, &apos;DELIVERY_ARRIVED&apos;, &apos;DELIVERY_STARTED&apos;, &apos;ORDER_PLACED&apos;, &apos;PARTICIPATION_CONFIRMED&apos;, &apos;PARTICIPATION_REQUEST&apos;, &apos;PAYMENT_REQUEST&apos;, &apos;POLICY_VIOLATION&apos;, &apos;RECRUITMENT_DONE&apos;, &apos;REVIEW_REQUEST&apos;, &apos;TRANSACTION_COMPLETE&apos;)|0e</StoredType>
+      <StoredType>enum(&apos;DELIVERY_ARRIVED&apos;, &apos;DELIVERY_STARTED&apos;, &apos;ORDER_PLACED&apos;, &apos;PARTICIPATION_APPROVED&apos;, &apos;PARTICIPATION_REJECTED&apos;, &apos;PARTICIPATION_REQUEST&apos;, &apos;PAYMENT_REQUEST&apos;, &apos;POLICY_VIOLATION&apos;, &apos;RECRUITMENT_DONE&apos;, &apos;REVIEW_REQUEST&apos;)|0e</StoredType>
     </column>
     <column id="363" parent="303" name="receiver_user_id">
       <Position>6</Position>

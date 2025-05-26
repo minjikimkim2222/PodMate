@@ -400,6 +400,9 @@ public class MyPageService {
             } else if (pod.getPodType() == PodType.GROUP_BUY) {
                 pod.increaseCurrentAmount(mapping.getGroupBuyQuantity());
             }
+            notificationService.notifyParticipationApproved(member.getId(), pod);
+        }else{
+            notificationService.notifyParticipationRejected(member.getId(), pod);
         }
 
         // 목표 수량 도달 시 상태 변경

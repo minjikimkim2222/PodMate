@@ -20,7 +20,7 @@ public class NotificationConverter {
                 .build();
     }
 
-    public NotificationResponseDto.NotificationDto toDto(Notification notification, Long podId, Long receiverId, String relatedUrl) {
+    public NotificationResponseDto.NotificationDto toDto(Notification notification, String relatedUrl) {
         return NotificationResponseDto.NotificationDto.builder()
                 .imageUrl(notification.getReceiver().getProfileImage())
                 .noticeType(notification.getNotificationType().toString())
