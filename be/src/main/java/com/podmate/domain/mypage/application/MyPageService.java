@@ -6,6 +6,7 @@ import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
 import com.podmate.domain.mypage.dto.MyPageRequestDto;
 import com.podmate.domain.mypage.exception.PodStatusNotRecruitingException;
+import com.podmate.domain.notification.application.NotificationService;
 import com.podmate.domain.orderForm.converter.OrderFormConverter;
 import com.podmate.domain.orderForm.domain.entity.OrderForm;
 import com.podmate.domain.orderForm.domain.entity.OrderItem;
@@ -66,6 +67,8 @@ public class MyPageService {
     private final ReviewOptionMappingRepository reviewOptionMappingRepository;
     private final OrderFormRepository orderFormRepository;
     private final OrderItemRepository orderItemRepository;
+
+    private final NotificationService notificationService;
 
     public List<Pod> getPodList(Long userId, PodRole podRole, PodStatus podStatus){
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
@@ -402,6 +405,7 @@ public class MyPageService {
         // 목표 수량 도달 시 상태 변경
         if (pod.getCurrentAmount() >= pod.getGoalAmount()) {
             pod.updateInprogressStatus(InprogressStatus.PENDING_ORDER);
+            notificationService.notifyRecruitmentDone(user.getId(), pod);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.podmate.domain.notification.application;
 
 import com.podmate.domain.notification.api.NotificationController;
+import com.podmate.domain.notification.converter.NotificationConverter;
 import com.podmate.domain.notification.domain.NotificationRepository;
 import com.podmate.domain.notification.domain.dto.NotificationResponseDto;
 import com.podmate.domain.notification.domain.entity.Notification;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.podmate.domain.notification.domain.enums.NotificationType.PARTICIPATION_REQUEST;
+import static com.podmate.domain.notification.domain.enums.NotificationType.RECRUITMENT_DONE;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +37,7 @@ public class NotificationService {
     private final PodUserMappingRepository podUserMappingRepository;
     private final NotificationRepository notificationRepository;
     private static Map<Long, Integer> notificationCounts = new HashMap<>(); //알림 개수 저장
+    private final NotificationConverter notificationConverter;
 
     // 메시지 알림
     public SseEmitter subscribe(Long userId) {
@@ -76,25 +79,13 @@ public class NotificationService {
             try {
                 String content = requester.getNickname() + " 님이 " + pod.getPodName() + " 팟에 신청하였습니다.";
                 // DB 저장
-                Notification notification = Notification.builder()
-                        .receiver(receiver)
-                        .notificationType(PARTICIPATION_REQUEST)
-                        .content(content)
-                        .isRead(false)
-                        .createdAt(LocalDateTime.now())
-                        .build();
+                Notification notification = notificationConverter.toEntity(receiver, content, PARTICIPATION_REQUEST);
                 notificationRepository.save(notification);
 
+                String relatedUrl = "/api/mypage/mypods/"+pod.getId().toString()+"/"+receiver.getId()+"/order";
+
                 // 응답 DTO 구성
-                NotificationResponseDto.NotificationDto notificationDto =
-                        NotificationResponseDto.NotificationDto.builder()
-                                .imageUrl(notification.getReceiver().getProfileImage())
-                                .noticeType(notification.getNotificationType().toString())
-                                .content(content)
-                                .isRead(false)
-                                .createdAt(notification.getCreatedAt())
-                                .relatedUrl("/api/mypage/mypods/"+pod.getId().toString()+"/"+receiver.getId()+"/order") // 프론트에서 클릭 시 이동할 경로
-                                .build();
+                NotificationResponseDto.NotificationDto notificationDto = notificationConverter.toDto(notification, pod.getId(), receiver.getId(), relatedUrl);
                 sseEmitter.send(SseEmitter.event()
                         .name("requestParticipation")
                         .data(notificationDto));
@@ -123,5 +114,37 @@ public class NotificationService {
     public Integer getUnreadCount(Long receiverId) {
         Integer count = Math.toIntExact(notificationRepository.countByReceiver_IdAndIsReadFalse(receiverId));
         return count;
+    }
+
+    public void notifyRecruitmentDone(Long receiverId, Pod pod) {
+        User receiver = userRepository.findById(receiverId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        if (NotificationController.sseEmitters.containsKey(receiverId)) {
+            SseEmitter sseEmitter = NotificationController.sseEmitters.get(receiverId);
+            try {
+                String content = pod.getPodName() + " 팟의 모집이 완료되었습니다.";
+                // DB 저장
+                Notification notification = notificationConverter.toEntity(receiver, content, RECRUITMENT_DONE);
+                notificationRepository.save(notification);
+
+                String relatedUrl = "/api/mypage/inprogress/mypods";
+
+                // 응답 DTO 구성
+                NotificationResponseDto.NotificationDto notificationDto = notificationConverter.toDto(notification, pod.getId(), receiver.getId(), relatedUrl);
+                sseEmitter.send(SseEmitter.event()
+                        .name("recruitmentDone")
+                        .data(notificationDto));
+
+                // 알림 개수 증가
+                notificationCounts.put(receiverId, notificationCounts.getOrDefault(receiverId, 0) + 1);
+
+                // 현재 알림 개수 전송
+                sseEmitter.send(SseEmitter.event().name("notificationCount").data(notificationCounts.get(receiverId)));
+
+            } catch (IOException e) {
+                NotificationController.sseEmitters.remove(receiverId);
+            }
+        }
     }
 }
