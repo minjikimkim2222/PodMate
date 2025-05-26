@@ -1,5 +1,6 @@
 package com.podmate.domain.orderForm.api;
 
+import com.podmate.domain.notification.application.NotificationService;
 import com.podmate.domain.orderForm.application.OrderFormService;
 import com.podmate.domain.orderForm.dto.OrderFormRequestDto;
 import com.podmate.domain.orderForm.dto.OrderFormResponseDto;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderFormRestController {
     private final OrderFormService orderFormService;
+    private final NotificationService notificationService;
 
     @PostMapping
     public BaseResponse<Long> createOrderForm(
@@ -31,6 +33,9 @@ public class OrderFormRestController {
             @RequestBody OrderFormRequestDto.ItemIds request
             ){
         Long orderFormId = orderFormService.createOrderForm(user.getUserId(), podId, request.getItems());
+
+        //알림 전송
+        notificationService.notifyParticipationRequest(user.getUserId(), podId);
 
         return BaseResponse.onSuccess(SuccessStatus._OK, orderFormId);
     }
