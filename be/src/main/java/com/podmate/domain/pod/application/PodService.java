@@ -11,6 +11,7 @@ import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
 import com.podmate.domain.jjim.domain.entity.JJim;
 import com.podmate.domain.jjim.domain.repository.JJimRepository;
+import com.podmate.domain.notification.application.NotificationService;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.enums.*;
 import com.podmate.domain.pod.domain.repository.PodRepository;
@@ -52,6 +53,7 @@ public class PodService {
     private final PodUserMappingRepository podUserMappingRepository;
     private final AddressRepository addressRepository;
     private final DeliveryRepository deliveryRepository;
+    private final NotificationService notificationService;
 
     private static final int EARTH_RADIUS_KM = 6371; // 지구 반지름 (단위: km)
 
@@ -298,6 +300,7 @@ public class PodService {
                 throw new ShippingMismatchException();
             }
             delivery.updateDeliveryStatus(DeliveryStatus.DELIVERED);
+            notificationService.notifyReviewRequest(user.getId(), pod);
         }
         else{
             throw new InvalidStatusException();

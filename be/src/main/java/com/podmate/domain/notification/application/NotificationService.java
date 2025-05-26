@@ -62,6 +62,7 @@ public class NotificationService {
 
         return sseEmitter;
     }
+
     // 팟원의 참여 요청 알림
     public void notifyParticipationRequest(Long requesterId, Long podId){
         User requester = userRepository.findById(requesterId)
@@ -80,6 +81,7 @@ public class NotificationService {
         sendNotification(receiver, content, PARTICIPATION_REQUEST, "requestParticipation", relatedUrl);
     }
 
+    // 알림 읽음 처리
     public void markAsRead(Long userId, Long notificationId) {
         Notification notification = notificationRepository.findByIdAndReceiverId(notificationId, userId)
                 .orElseThrow(() -> new NotificationNotFoundException());
@@ -89,11 +91,13 @@ public class NotificationService {
         }
     }
 
+    // 읽지 않은 알림 개수
     public Integer getUnreadCount(Long receiverId) {
         Integer count = Math.toIntExact(notificationRepository.countByReceiver_IdAndIsReadFalse(receiverId));
         return count;
     }
 
+    // 팟의 모집 완료 알림
     public void notifyRecruitmentDone(Long receiverId, Pod pod) {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new UserNotFoundException());
@@ -104,6 +108,7 @@ public class NotificationService {
         sendNotification(receiver, content, RECRUITMENT_DONE, "recruitmentDone", relatedUrl);
     }
 
+    // 팟원의 신청 수락
     public void notifyParticipationApproved(Long userId, Pod pod) {
         User receiver = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
@@ -114,6 +119,7 @@ public class NotificationService {
         sendNotification(receiver, content, PARTICIPATION_APPROVED, "participationApproved", relatedUrl);
     }
 
+    // 팟원의 신청 거절
     public void notifyParticipationRejected(Long userId, Pod pod) {
         User receiver = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
@@ -122,6 +128,17 @@ public class NotificationService {
         sendNotification(receiver, content, PARTICIPATION_REJECTED, "participationRejected", null);
     }
 
+    public void notifyReviewRequest(Long userId, Pod pod) {
+        User receiver = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        String content = pod.getPodName() + " 팟에 거래 후기를 남겨주세요.";
+        String relatedUrl = "/api/reviews/" + pod.getId();
+
+        sendNotification(receiver, content, REVIEW_REQUEST, "reviewRequest", relatedUrl);
+    }
+
+    // 주요 알림 기능
     public void sendNotification(User receiver, String content, NotificationType type, String eventName, String relatedUrl) {
         if (!NotificationController.sseEmitters.containsKey(receiver.getId())) return;
 
