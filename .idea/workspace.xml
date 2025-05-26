@@ -14,6 +14,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/notification/application/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/notification/application/NotificationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/pod/application/PodService.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/pod/application/PodService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/global/util/oauth2/OAuth2LoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/global/util/oauth2/OAuth2LoginSuccessHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -247,7 +248,7 @@
       <workItem from="1748193627397" duration="17000" />
       <workItem from="1748230971048" duration="2000" />
       <workItem from="1748236936967" duration="11637000" />
-      <workItem from="1748263873790" duration="8997000" />
+      <workItem from="1748263873790" duration="12938000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />

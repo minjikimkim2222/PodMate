@@ -128,6 +128,7 @@ public class NotificationService {
         sendNotification(receiver, content, PARTICIPATION_REJECTED, "participationRejected", null);
     }
 
+    // 완료된 팟의 거래 후기 요청
     public void notifyReviewRequest(Long userId, Pod pod) {
         User receiver = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
@@ -136,6 +137,17 @@ public class NotificationService {
         String relatedUrl = "/api/reviews/" + pod.getId();
 
         sendNotification(receiver, content, REVIEW_REQUEST, "reviewRequest", relatedUrl);
+    }
+
+    // 팟장이 주문 완료 상태로 변경
+    public void notifyOrderPlaced(Long userId, Pod pod) {
+        User receiver = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        String content = pod.getPodName() + " 팟이 주문 완료되었습니다.";
+        String relatedUrl = "/api/mypage/inprogress/joinedpods";
+
+        sendNotification(receiver, content, ORDER_PLACED, "orderPlaced", relatedUrl);
     }
 
     // 주요 알림 기능

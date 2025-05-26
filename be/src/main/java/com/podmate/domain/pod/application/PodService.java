@@ -294,6 +294,7 @@ public class PodService {
                 throw new PendingOrderMismatchException();
             }
             pod.updateInprogressStatus(InprogressStatus.ORDER_COMPLETED);
+            notificationService.notifyOrderPlaced(user.getId(), pod);
         }
         else if("DELIVERED".equals(nextStatus)) {
             if (delivery.getDeliveryStatus() != DeliveryStatus.SHIPPING){
@@ -331,8 +332,8 @@ public class PodService {
 
 
 
-    //15초마다 배송 pickupDeadline 완료된거 있는지 점검 -> log가 자주 떠서 1분으로 변경
-    @Scheduled(fixedRate = 60000)
+    //15초마다 배송 pickupDeadline 완료된거 있는지 점검 -> log가 자주 떠서 10분으로 변경
+    @Scheduled(fixedRate = 600000)
     public void checkAndCompletePods() {
         // 1. 배송 완료 상태이고 픽업 마감 기한이 지난 Delivery들 조회
         List<Delivery> deliveries = deliveryRepository
