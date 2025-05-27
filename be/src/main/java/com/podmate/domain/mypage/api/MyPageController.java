@@ -34,6 +34,14 @@ public class MyPageController {
         return BaseResponse.onSuccess(SuccessStatus._OK, response);
     }
 
+    //나의 장바구니 목록을 통한 상품 더보기 조회
+    @GetMapping("/carts/platforms/{platformInfoId}/cartItems")
+    public BaseResponse<CartResponseDto.CartItemList> getCartItemList(@PathVariable("platformInfoId") Long platformInfoId, @AuthenticationPrincipal CustomOAuth2User user) {
+        CartResponseDto.CartItemList response = cartService.getCartItems(user.getUserId(), platformInfoId);
+
+        return BaseResponse.onSuccess(SuccessStatus._OK, response);
+    }
+
     //진행중인 나의 팟 리스트 조회
     @GetMapping("/inprogress/mypods")
     public BaseResponse<List<PodResponse>> getInprogressMyPodList(@AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
