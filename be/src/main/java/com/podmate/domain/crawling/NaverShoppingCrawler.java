@@ -28,7 +28,7 @@ public class NaverShoppingCrawler implements PlatformCrawler{
         WebDriverManager.chromedriver().setup(); // WebDriverManager가 시스템에 설치된 Chrome 버전(예: 137)에 맞는 드라이버를 가져옴
         ChromeOptions options = new ChromeOptions();
 
-        // options.addArguments("--headless"); // UI 없이 백그라운드 실행 (배포시에 주석 처리)
+         options.addArguments("--headless"); // UI 없이 백그라운드 실행 (배포시에 주석 처리)
 
         // 크롤링 봇 방지
 //        // 1. User-Agent 설정 (필수 - 봇 탐지 우회의 기본)
