@@ -1,5 +1,6 @@
 package com.podmate.domain.pod.converter;
 
+import com.podmate.domain.address.domain.entity.Address;
 import com.podmate.domain.orderForm.domain.entity.OrderForm;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.dto.PodResponseDto;
@@ -13,7 +14,7 @@ import static java.util.Optional.ofNullable;
 
 public class PodConverter {
     public static PodResponseDto.Minimum buildMinimumPodResponseDto(Pod pod, boolean isJJim) {
-            return PodResponseDto.Minimum.builder()
+        return PodResponseDto.Minimum.builder()
                     .podId(pod.getId())
                     .podName(pod.getPodName())
                     .podType(pod.getPodType().name())
@@ -22,6 +23,26 @@ public class PodConverter {
                     .currentAmount(pod.getCurrentAmount())
                     .isJJim(isJJim)
                     .build();
+    }
+
+    public static PodResponseDto.Minimum buildMinimumPodResponseDtoForMap(Pod pod, boolean isJJim, boolean includeAddress) {
+        Address address = pod.getAddress();
+        return PodResponseDto.Minimum.builder()
+                .podId(pod.getId())
+                .podName(pod.getPodName())
+                .podType(pod.getPodType().name())
+                .platform(pod.getPlatform().name())
+                .goalAmount(pod.getGoalAmount())
+                .currentAmount(pod.getCurrentAmount())
+                .isJJim(isJJim)
+
+                // ✅ 주소 필드 세팅
+                .addressId(address.getId())
+                .roadAddress(address.getRoadAddress())
+                .latitude(address.getLatitude())
+                .longitude(address.getLongitude())
+
+                .build();
     }
 
     public static PodResponseDto.GroupBuy buildGroupBuyPodResponseDto(Pod pod, boolean isJJim) {
@@ -33,6 +54,26 @@ public class PodConverter {
                 .goalAmount(pod.getGoalAmount())
                 .currentAmount(pod.getCurrentAmount())
                 .isJJim(isJJim)
+                .build();
+    }
+
+    public static PodResponseDto.GroupBuy buildGroupBuyPodResponseDtoForMap(Pod pod, boolean isJJim, boolean includeAddress) {
+        Address address = pod.getAddress();
+        return PodResponseDto.GroupBuy.builder()
+                .podId(pod.getId())
+                .podName(pod.getPodName())
+                .podType(pod.getPodType().name())
+                .itemUrl(pod.getItemUrl())
+                .goalAmount(pod.getGoalAmount())
+                .currentAmount(pod.getCurrentAmount())
+                .isJJim(isJJim)
+
+                // 주소 필드 세팅
+                .addressId(address.getId())
+                .roadAddress(address.getRoadAddress())
+                .latitude(address.getLatitude())
+                .longitude(address.getLongitude())
+
                 .build();
     }
 

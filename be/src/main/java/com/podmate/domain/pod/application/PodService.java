@@ -149,6 +149,18 @@ public class PodService {
         return null;  // PodType이 두 가지 외에는 처리되지 않음
     }
 
+    private PodResponse mapToPodResponseDtoForMap(Pod pod, Set<Long> jjimPodIds, boolean includeAddress) {
+        boolean isJJim = jjimPodIds.contains(pod.getId());
+
+        if (pod.getPodType() == PodType.MINIMUM) {
+            return buildMinimumPodResponseDtoForMap(pod, isJJim, true);
+        } else if (pod.getPodType() == PodType.GROUP_BUY) {
+            return buildGroupBuyPodResponseDtoForMap(pod, isJJim, true);
+        }
+
+        return null;  // PodType이 두 가지 외에는 처리되지 않음
+    }
+
     //사용자 주변 팟 거리 계산 메서드
     private double calculateDistance(double lat1, double lon1, Pod pod) {
         double lat2 = pod.getAddress().getLatitude();
@@ -326,7 +338,7 @@ public class PodService {
         Set<Long> jJimPodIds = getJJimPodIds(userId);
 
         return pods.stream()
-                .map(pod -> mapToPodResponseDto(pod, jJimPodIds))
+                .map(pod -> mapToPodResponseDtoForMap(pod, jJimPodIds, true))
                 .collect(Collectors.toList());
     }
 

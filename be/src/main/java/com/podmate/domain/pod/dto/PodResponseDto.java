@@ -25,6 +25,12 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private int goalAmount;     //목표 금액 or 목표 인원
         private int currentAmount;  //현재 금액 or 현재 인원
         private boolean isJJim;
+
+        // 주소 필드 추가
+        private Long addressId;
+        private String roadAddress;
+        private double latitude;
+        private double longitude;
     }
 
     @Builder
@@ -91,6 +97,13 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private int goalAmount;     //목표 금액 or 목표 인원
         private int currentAmount;  //현재 금액 or 현재 인원
         private boolean isJJim;
+
+        //  주소 필드 추가
+        private Long addressId;
+        private String roadAddress;
+        private double latitude;
+        private double longitude;
+
     }
     @Builder
     @Getter
