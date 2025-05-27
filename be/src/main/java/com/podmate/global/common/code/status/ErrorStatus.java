@@ -60,8 +60,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // --- ORDERFORM ---
     ORDERFORM_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDERFORM_404", "해당 주문서를 찾을 수 없습니다."),
-    ORDERFORM_ACCESS_DENIED_EXCEPTION(HttpStatus.FORBIDDEN, "ORDERFORM_403", "해당 주문서는 본인의 것이 아닙니다.");
+    ORDERFORM_ACCESS_DENIED_EXCEPTION(HttpStatus.FORBIDDEN, "ORDERFORM_403", "해당 주문서는 본인의 것이 아닙니다."),
 
+    // --- NOTIFICATION --
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION", "알림을 찾을 수 없습니다.");
 
 
     private final HttpStatus httpStatus;

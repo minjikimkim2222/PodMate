@@ -11,6 +11,7 @@ import com.podmate.domain.delivery.domain.enums.DeliveryStatus;
 import com.podmate.domain.delivery.domain.reposiotry.DeliveryRepository;
 import com.podmate.domain.jjim.domain.entity.JJim;
 import com.podmate.domain.jjim.domain.repository.JJimRepository;
+import com.podmate.domain.notification.application.NotificationService;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.enums.*;
 import com.podmate.domain.pod.domain.repository.PodRepository;
@@ -52,6 +53,7 @@ public class PodService {
     private final PodUserMappingRepository podUserMappingRepository;
     private final AddressRepository addressRepository;
     private final DeliveryRepository deliveryRepository;
+    private final NotificationService notificationService;
 
     private static final int EARTH_RADIUS_KM = 6371; // 지구 반지름 (단위: km)
 
@@ -292,12 +294,14 @@ public class PodService {
                 throw new PendingOrderMismatchException();
             }
             pod.updateInprogressStatus(InprogressStatus.ORDER_COMPLETED);
+            notificationService.notifyOrderPlaced(user.getId(), pod);
         }
         else if("DELIVERED".equals(nextStatus)) {
             if (delivery.getDeliveryStatus() != DeliveryStatus.SHIPPING){
                 throw new ShippingMismatchException();
             }
             delivery.updateDeliveryStatus(DeliveryStatus.DELIVERED);
+            notificationService.notifyDeliveryArrived(user.getId(), pod);
         }
         else{
             throw new InvalidStatusException();
@@ -326,10 +330,8 @@ public class PodService {
                 .collect(Collectors.toList());
     }
 
-
-
-    //15초마다 배송 pickupDeadline 완료된거 있는지 점검 -> log가 자주 떠서 1분으로 변경
-    @Scheduled(fixedRate = 60000)
+    //15초마다 배송 pickupDeadline 완료된거 있는지 점검 -> log가 자주 떠서 10분으로 변경
+    @Scheduled(fixedRate = 600000)
     public void checkAndCompletePods() {
         // 1. 배송 완료 상태이고 픽업 마감 기한이 지난 Delivery들 조회
         List<Delivery> deliveries = deliveryRepository
@@ -339,6 +341,13 @@ public class PodService {
             Pod pod = delivery.getPod();
             if (pod != null && pod.getPodStatus() != PodStatus.COMPLETED) {
                 pod.updatePodStatus(PodStatus.COMPLETED);
+
+                // 팟원 목록 조회
+                List<User> receivers = podUserMappingRepository.findMembersByPodId(pod.getId());
+
+                for (User receiver : receivers) {
+                    notificationService.notifyReviewRequest(receiver.getId(), pod);
+                }
             }
         }
 
