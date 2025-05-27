@@ -32,10 +32,14 @@ public class PlatformInfo {
     @Column(nullable = false, name = "platform_name")
     private String platformName;
 
+    @Column(nullable = false, name = "cart_name")
+    private String cartName;
+
     @Builder
-    public PlatformInfo(User user, String platformName){
+    public PlatformInfo(User user, String platformName, String cartName){
         this.user = user;
         this.platformName = platformName;
+        this.cartName = cartName;
     }
 
 }

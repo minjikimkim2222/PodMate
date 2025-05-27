@@ -13,6 +13,7 @@ import com.podmate.domain.platformInfo.converter.PlatformConverter;
 import com.podmate.domain.platformInfo.domain.entity.PlatformInfo;
 import com.podmate.domain.platformInfo.domain.repository.PlatformInfoRepository;
 import com.podmate.domain.platformInfo.exception.PlatformAccessDeniedException;
+import com.podmate.domain.platformInfo.exception.PlatformAlreadyExistsException;
 import com.podmate.domain.platformInfo.exception.PlatformNotSupportedException;
 import com.podmate.domain.pod.domain.enums.Platform;
 import com.podmate.domain.user.domain.entity.User;
@@ -40,7 +41,21 @@ public class CartServiceImpl implements CartService {
 
         Platform platform = validatePlatform(request.getPlatformName());
 
-        getOrCreatePlatformInfo(user, platform);
+        // 플랫폼별 단 하나의 장바구니만 허용
+        platformInfoRepository.findByUserAndPlatformName(user, platform.name())
+                        .ifPresent(existing -> {
+                           throw new PlatformAlreadyExistsException();
+                        });
+
+
+        // 생성
+        PlatformInfo platformInfo = PlatformInfo.builder()
+                .user(user)
+                .platformName(platform.name())
+                .cartName(request.getCartName())  // <- 추가된 cartName 저장
+                .build();
+
+        platformInfoRepository.save(platformInfo);
 
         return "장바구니가 생성되었습니다.";
 
@@ -134,15 +149,15 @@ public class CartServiceImpl implements CartService {
     }
 
     // 플랫폼 정보 조회 or 생성
-    private PlatformInfo getOrCreatePlatformInfo(User user, Platform platform){
-        log.info("==getOrCreatePlatformInfo== {}", platform.name());
-        return platformInfoRepository.findByUserAndPlatformName(user, platform.name())
-                .orElseGet(() -> platformInfoRepository.save(
-                        PlatformInfo.builder()
-                                .user(user)
-                                .platformName(platform.name())
-                                .build()
-                ));
-    }
+//    private PlatformInfo getOrCreatePlatformInfo(User user, Platform platform){
+//        log.info("==getOrCreatePlatformInfo== {}", platform.name());
+//        return platformInfoRepository.findByUserAndPlatformName(user, platform.name())
+//                .orElseGet(() -> platformInfoRepository.save(
+//                        PlatformInfo.builder()
+//                                .user(user)
+//                                .platformName(platform.name())
+//                                .build()
+//                ));
+//    }
 
 }
