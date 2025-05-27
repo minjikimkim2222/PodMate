@@ -37,7 +37,7 @@ public class CartItem extends BaseEntity {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(nullable = false, name = "item_url")
+    @Column(nullable = false, name = "item_url", columnDefinition = "TEXT")
     private String itemUrl;
 
     @Column(name = "option_text")
