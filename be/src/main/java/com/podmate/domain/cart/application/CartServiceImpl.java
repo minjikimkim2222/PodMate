@@ -93,8 +93,9 @@ public class CartServiceImpl implements CartService {
         // itemList 순회하며 각각 저장
         for (CartItemRequest.Item item : request.getItemList()){
             // TODO : 크롤링 서비스 적용 전
-            String itemName = crawlingService.fetchItemName(item.getItemUrl());
-            int price = crawlingService.fetchPrice(item.getItemUrl());
+
+            String itemName = crawlingService.fetchItemName(platformInfo, item.getItemUrl());
+            int price = crawlingService.fetchPrice(platformInfo, item.getItemUrl());
 
             CartItem cartItem = CartItem.builder()
                     .platformInfo(platformInfo)
