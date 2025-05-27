@@ -9,6 +9,8 @@ public class CartRequestDto {
     public static class CartCreateRequest {
         @NotBlank
         private String platformName;
+        @NotBlank
+        private String cartName;
     }
 
     @Getter

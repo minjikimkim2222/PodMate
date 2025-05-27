@@ -17,6 +17,7 @@ public class CartResponseDto {
     public static class PlatformDto {
         private Long platformInfoId;
         private String platformName;
+        private String cartName;
     }
 
     @Getter

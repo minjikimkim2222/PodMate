@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class PlatformConverter {
     public static CartResponseDto.PlatformList toPlatformList(List<PlatformInfo> platformInfos){
         List<PlatformDto> platformDtos = platformInfos.stream()
-                .map(info -> new PlatformDto(info.getId(), info.getPlatformName()))
+                .map(info -> new PlatformDto(info.getId(), info.getPlatformName(), info.getCartName()))
                 .collect(Collectors.toList());
 
         return new CartResponseDto.PlatformList(platformDtos);
