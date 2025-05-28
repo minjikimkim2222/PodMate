@@ -1,5 +1,6 @@
 package com.podmate.domain.notification.application;
 
+import com.podmate.domain.mypage.dto.MyPageRequestDto;
 import com.podmate.domain.notification.api.NotificationController;
 import com.podmate.domain.notification.converter.NotificationConverter;
 import com.podmate.domain.notification.domain.NotificationRepository;
@@ -8,14 +9,19 @@ import com.podmate.domain.notification.domain.entity.Notification;
 import com.podmate.domain.notification.domain.enums.NotificationType;
 import com.podmate.domain.notification.exception.NotificationNotFoundException;
 import com.podmate.domain.pod.domain.entity.Pod;
+import com.podmate.domain.pod.domain.enums.PodType;
 import com.podmate.domain.pod.domain.repository.PodRepository;
 import com.podmate.domain.pod.exception.PodNotFoundException;
+import com.podmate.domain.podUserMapping.domain.entity.PodUserMapping;
+import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.podUserMapping.domain.repository.PodUserMappingRepository;
 import com.podmate.domain.podUserMapping.exception.PodLeaderNotFoundException;
+import com.podmate.domain.podUserMapping.exception.PodUserMappingNotFoundException;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
 import com.podmate.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -102,8 +108,8 @@ public class NotificationService {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new UserNotFoundException());
 
-        String content = pod.getPodName() + " 팟의 모집이 완료되었습니다.";
-        String relatedUrl = "/api/mypage/inprogress/mypods";
+        String content = pod.getPodName() + " 팟의 모집이 완료되었습니다. 입금 계좌를 입력해주세요";
+        String relatedUrl = "/api/mypage/inprogress/mypods/"+pod.getId()+"/deposit-account";
 
         sendNotification(receiver, content, RECRUITMENT_DONE, "recruitmentDone", relatedUrl);
     }
@@ -139,7 +145,17 @@ public class NotificationService {
         sendNotification(receiver, content, REVIEW_REQUEST, "reviewRequest", relatedUrl);
     }
 
-    // 팟장이 주문 완료 상태로 변경
+    public void notifyAddTrackingNum(Long userId, Pod pod) {
+        User receiver = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        String content = pod.getPodName() + " 팟의 운송장 번호를 입력해주세요.";
+        String relatedUrl = "/api/mypage/inprogress/mypods/"+pod.getId();
+
+        sendNotification(receiver, content, ADD_TRACKING_NUM, "addTrackingNum", relatedUrl);
+    }
+
+    // 팟장이 주문 완료 상태로 변경 -> 팟원들에게 알림
     public void notifyOrderPlaced(Long userId, Pod pod) {
         User receiver = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());
@@ -171,6 +187,44 @@ public class NotificationService {
 
         sendNotification(receiver, content, DELIVERY_ARRIVED, "deliveryArrived", relatedUrl);
     }
+
+    // 팟원들에게 입금 요청
+    public void notifyPaymentRequest(Long userId, Pod pod, MyPageRequestDto.DepositAccountRequestDto request) {
+        User receiver = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        //예외 만들어야됨!!
+        PodUserMapping podUserMapping = podUserMappingRepository.findByPod_IdAndUser_IdAndPodRole(pod.getId(), userId, PodRole.POD_MEMBER)
+                .orElseThrow(() -> new ExpressionException("podId=%d에 대해 userId=%d와의 매핑(POD_MEMBER)이 존재하지 않습니다.".formatted(pod.getId(), userId)));
+
+
+        int totalPrice= 0 ;
+        if (pod.getPodType() == PodType.MINIMUM){
+            totalPrice = podUserMapping.getOrderForm().getTotalAmount();
+        }else{
+            totalPrice = pod.getUnitPrice() * pod.getUnitQuantity() * podUserMapping.getGroupBuyQuantity();
+        }
+
+
+        String content = pod.getPodName() + " 팟 모집이 완료되었습니다. 아래 계좌로 지금 입금해주세요." +
+                                            " 은행명 : "+request.getDepositAccountBank()+
+                                            " 계좌번호 :"+request.getDepositAccountNumber()+
+                                            " 예금주 : "+request.getDepositAccountHolder()+
+                                            " 총금액 :"+totalPrice;
+        String relatedUrl = "/api/mypage/"+pod.getId()+"/deposit-status";
+
+        sendNotification(receiver, content, PAYMENT_REQUEST, "paymentRequest", relatedUrl);
+    }
+
+    public void notifyDepositCompleted(Long receiverId, Pod pod){
+        User receiver = userRepository.findById(receiverId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        String content = pod.getPodName() + " 팟의 모든 팟원들의 입금이 완료되었습니다. 이제 주문해주세요";
+
+        sendNotification(receiver, content, PAYMENT_COMPLETED, "deliveryArrived", null);
+    }
+
     // 주요 알림 기능
     public void sendNotification(User receiver, String content, NotificationType type, String eventName, String relatedUrl) {
         if (!NotificationController.sseEmitters.containsKey(receiver.getId())) return;

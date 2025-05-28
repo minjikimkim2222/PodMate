@@ -5,6 +5,7 @@ import com.podmate.domain.cart.dto.CartResponseDto;
 import com.podmate.domain.mypage.application.MyPageService;
 import com.podmate.domain.mypage.dto.MyPageRequestDto;
 import com.podmate.domain.orderForm.dto.OrderFormResponseDto;
+import com.podmate.domain.pod.dto.PodRequestDto;
 import com.podmate.domain.pod.dto.PodResponse;
 import com.podmate.domain.pod.dto.PodResponseDto;
 import com.podmate.domain.review.dto.ReviewResponseDto;
@@ -75,6 +76,19 @@ public class MyPageController {
     public BaseResponse<String> addTrackingNumber(@RequestBody MyPageRequestDto.TrackingNumRequestDto request, @PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
         myPageService.addTrackingNum(request, podId, customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, "successfully saved tracking number!");
+    }
+
+    //입금 계좌 입력
+    @PatchMapping("/inprogress/mypods/{podId}/deposit-account")
+    public BaseResponse<String> addDepositAccount(@RequestBody MyPageRequestDto.DepositAccountRequestDto request, @PathVariable("podId") Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        myPageService.addDepositAccount(request, podId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, "successfully saved deposit account!");
+    }
+    // 입금 상태 변경하기
+    @PatchMapping("/{podId}/deposit-status")
+    public BaseResponse<String> updatePodStatus(@PathVariable Long podId, @AuthenticationPrincipal CustomOAuth2User customOAuth2User) {
+        myPageService.updateDepositStatus(podId, customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK,"입금 상태가 성공적으로 변경되었습니다.");
     }
 
     //완료된 나의 팟 리스트 조회

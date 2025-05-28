@@ -2,12 +2,13 @@ package com.podmate.domain.notification.domain.enums;
 
 public enum NotificationType {
     // 공통
-    POLICY_VIOLATION,        // 서비스 정지 알림
     REVIEW_REQUEST,          // 거래 후기 요청
 
     // 팟장 관련
     PARTICIPATION_REQUEST,   // 참여 요청 도착
     RECRUITMENT_DONE,        // 모집 완료
+    PAYMENT_COMPLETED,       // 팟장들의 입금 완료
+    ADD_TRACKING_NUM,        // 운송장 입력 요청
 
     // 팟원 관련
     PARTICIPATION_APPROVED,  // 팟 참여 승인

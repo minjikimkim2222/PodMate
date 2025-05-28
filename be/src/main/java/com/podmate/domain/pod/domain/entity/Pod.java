@@ -68,6 +68,12 @@ public class Pod extends BaseEntity {
 
     private Integer unitPrice;      //단위 가격
 
+    private String depositAccountBank;     // 은행명
+
+    private String depositAccountNumber;   // 계좌번호
+
+    private String depositAccountHolder;   // 예금주
+
     @Builder
     private Pod(String podName, PodType podType, PodStatus podStatus, InprogressStatus inprogressStatus, LocalDate deadline, Platform platform,
                 int currentAmount, int goalAmount, String description, Address address, String itemUrl, int totalAmount, int unitQuantity, int unitPrice) {
@@ -131,5 +137,11 @@ public class Pod extends BaseEntity {
 
     public void updatePodStatus(PodStatus status) {
         this.podStatus = status;
+    }
+
+    public void updateDepositAccount (String depositAccountBank, String depositAccountHolder, String depositAccountNumber) {
+        this.depositAccountBank = depositAccountBank;
+        this.depositAccountNumber = depositAccountNumber;
+        this.depositAccountHolder = depositAccountHolder;
     }
 }

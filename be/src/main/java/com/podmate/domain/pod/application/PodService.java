@@ -22,6 +22,7 @@ import com.podmate.domain.pod.exception.InvalidStatusException;
 import com.podmate.domain.pod.exception.PendingOrderMismatchException;
 import com.podmate.domain.pod.exception.PodNotFoundException;
 import com.podmate.domain.podUserMapping.domain.entity.PodUserMapping;
+import com.podmate.domain.podUserMapping.domain.enums.DepositStatus;
 import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
 import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.podUserMapping.domain.repository.PodUserMappingRepository;
@@ -221,6 +222,7 @@ public class PodService {
                 .user(user)
                 .isApproved(IsApproved.ACCEPTED)
                 .podRole(PodRole.POD_LEADER)
+                .depositStatus(DepositStatus.DEPOSIT_COMPLETED)
                 .build();
 
         podUserMappingRepository.save(mapping);
@@ -290,8 +292,6 @@ public class PodService {
                 .orElseThrow(() -> new UserNotFoundException());
         Pod pod = podRepository.findById(podId)
                 .orElseThrow(() -> new PodNotFoundException());
-        Delivery delivery = deliveryRepository.findByPod_Id(pod.getId())
-                .orElseThrow(() -> new DeliveryNotFoundException());
 
         if (!podUserMappingRepository.existsByPod_IdAndUser_IdAndPodRole(pod.getId(), user.getId(), PodRole.POD_LEADER)) {
             throw new PodUserMappingNotFoundException();
@@ -306,9 +306,18 @@ public class PodService {
                 throw new PendingOrderMismatchException();
             }
             pod.updateInprogressStatus(InprogressStatus.ORDER_COMPLETED);
-            notificationService.notifyOrderPlaced(user.getId(), pod);
+
+            notificationService.notifyAddTrackingNum(user.getId(), pod);
+            //팟원에게 주문 완료 알림 전송
+            List<User> receivers = podUserMappingRepository.findMembersByPodId(pod.getId());
+            for (User receiver : receivers) {
+                notificationService.notifyOrderPlaced(receiver.getId(), pod);
+            }
         }
         else if("DELIVERED".equals(nextStatus)) {
+            Delivery delivery = deliveryRepository.findByPod_Id(pod.getId())
+                .orElseThrow(() -> new DeliveryNotFoundException());
+
             if (delivery.getDeliveryStatus() != DeliveryStatus.SHIPPING){
                 throw new ShippingMismatchException();
             }
