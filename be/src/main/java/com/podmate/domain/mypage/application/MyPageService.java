@@ -19,12 +19,14 @@ import com.podmate.domain.pod.domain.enums.InprogressStatus;
 import com.podmate.domain.pod.domain.enums.PodStatus;
 import com.podmate.domain.pod.domain.enums.PodType;
 import com.podmate.domain.pod.domain.repository.PodRepository;
+import com.podmate.domain.pod.dto.PodRequestDto;
 import com.podmate.domain.pod.dto.PodResponse;
 import com.podmate.domain.pod.dto.PodResponseDto;
 import com.podmate.domain.pod.exception.PodStatusMismatchException;
 import com.podmate.domain.pod.exception.PodNotFoundException;
 import com.podmate.domain.pod.exception.PodTypeNotFoundException;
 import com.podmate.domain.podUserMapping.domain.entity.PodUserMapping;
+import com.podmate.domain.podUserMapping.domain.enums.DepositStatus;
 import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
 import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.podUserMapping.domain.repository.PodUserMappingRepository;
@@ -38,7 +40,9 @@ import com.podmate.domain.review.dto.ReviewResponseDto;
 import com.podmate.domain.user.domain.entity.User;
 import com.podmate.domain.user.domain.repository.UserRepository;
 import com.podmate.domain.user.exception.UserNotFoundException;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,14 +53,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.podmate.domain.pod.converter.PodConverter.*;
-import static com.podmate.domain.pod.domain.enums.InprogressStatus.ORDER_COMPLETED;
-import static com.podmate.domain.pod.domain.enums.InprogressStatus.RECRUITING;
+import static com.podmate.domain.pod.domain.enums.InprogressStatus.*;
 import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_LEADER;
 import static com.podmate.domain.podUserMapping.domain.enums.PodRole.POD_MEMBER;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MyPageService {
 
     private final UserRepository userRepository;
@@ -207,6 +211,38 @@ public class MyPageService {
         pod.updateInprogressStatus(ORDER_COMPLETED);
 
         notificationService.notifyDeliveryStarted(userId, pod);
+    }
+
+    public void addDepositAccount(MyPageRequestDto.DepositAccountRequestDto request, Long podId, Long userId){
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        Pod pod = podRepository.findById(podId).orElseThrow(() -> new PodNotFoundException());
+        pod.updateDepositAccount(request.getDepositAccountBank(), request.getDepositAccountNumber(), request.getDepositAccountHolder());
+
+        //팟원에게 입금 요청 알림 전송
+        List<User> receivers = podUserMappingRepository.findMembersByPodId(pod.getId());
+        for (User receiver : receivers) {
+            notificationService.notifyPaymentRequest(receiver.getId(), pod, request);
+        }
+    }
+
+    public void updateDepositStatus(Long podId, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+        Pod pod = podRepository.findById(podId).orElseThrow(() -> new PodNotFoundException());
+        PodUserMapping podUserMapping = podUserMappingRepository.findByPod_IdAndUser_IdAndPodRole(podId, user.getId(), POD_MEMBER)
+                .orElseThrow(() -> new PodUserMappingNotFoundException());
+        podUserMapping.updatePodUserMappingDepositStatus(DepositStatus.DEPOSIT_COMPLETED);
+
+        Long receiverId = podUserMappingRepository.findLeaderUserIdByPodId(podId)
+                .orElseThrow(() -> new UserNotFoundException());
+        List<PodUserMapping> list = podUserMappingRepository.findAllByPod_Id(podId);
+        boolean allDeposited = list.stream()
+                .allMatch(mapping -> mapping.getDepositStatus() == DepositStatus.DEPOSIT_COMPLETED);
+
+        if (allDeposited) {
+            // 모든 팟원이 입금을 완료했다면 팟장에게 알림 전송
+            notificationService.notifyDepositCompleted(receiverId, pod);
+        }
     }
 
     public List<PodResponse> getCompletedMyPods(Long userId) {

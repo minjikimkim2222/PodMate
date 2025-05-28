@@ -8,6 +8,7 @@ import com.podmate.domain.pod.domain.enums.InprogressStatus;
 import com.podmate.domain.pod.domain.enums.Platform;
 import com.podmate.domain.pod.domain.enums.PodStatus;
 import com.podmate.domain.pod.domain.enums.PodType;
+import com.podmate.domain.podUserMapping.domain.enums.DepositStatus;
 import com.podmate.domain.podUserMapping.domain.enums.IsApproved;
 import com.podmate.domain.podUserMapping.domain.enums.PodRole;
 import com.podmate.domain.user.domain.entity.User;
@@ -52,13 +53,18 @@ public class PodUserMapping extends BaseEntity {
     @Column(nullable = true)
     private Integer groupBuyQuantity;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DepositStatus depositStatus;
+
     @Builder
-    private PodUserMapping(Pod pod, User user, IsApproved isApproved, PodRole podRole, Integer groupBuyQuantity) {
+    private PodUserMapping(Pod pod, User user, IsApproved isApproved, PodRole podRole, Integer groupBuyQuantity, DepositStatus depositStatus) {
         this.pod = pod;
         this.user = user;
         this.isApproved = isApproved;
         this.podRole = podRole;
         this.groupBuyQuantity = groupBuyQuantity;
+        this.depositStatus = depositStatus;
     }
 
 
@@ -70,11 +76,15 @@ public class PodUserMapping extends BaseEntity {
         mapping.orderForm = orderForm;
         mapping.isApproved = isApproved;
         mapping.podRole = podRole;
-
+        mapping.depositStatus = DepositStatus.DEPOSIT_PENDING;
         return mapping;
     }
 
     public void updatePodUserMappingIsApproved(IsApproved isApproved) {
         this.isApproved = isApproved;
+    }
+
+    public void updatePodUserMappingDepositStatus(DepositStatus depositStatus){
+        this.depositStatus = depositStatus;
     }
 }

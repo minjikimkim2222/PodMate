@@ -26,4 +26,13 @@ public class MyPageRequestDto {
     public static class IsApprovedStatusRequestDto{
         private String isApprovedStatus;     //팟장의 팟원 수락 상태
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class DepositAccountRequestDto{
+        private String depositAccountBank;     // 은행명
+        private String depositAccountNumber;   // 계좌번호
+        private String depositAccountHolder;   // 예금주
+    }
 }

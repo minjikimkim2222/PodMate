@@ -1,10 +1,13 @@
 package com.podmate.domain.pod.domain.repository;
 
 import com.podmate.domain.pod.domain.entity.Pod;
+import com.podmate.domain.pod.domain.enums.InprogressStatus;
 import com.podmate.domain.pod.domain.enums.PodStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -28,4 +31,10 @@ public interface PodRepository extends JpaRepository<Pod, Long> {
             @Param("minLng") double minLng,
             @Param("maxLng") double maxLng
     );
+
+    @Query(value = "SELECT * FROM pod WHERE pod_id = :id", nativeQuery = true)
+    Optional<Pod> findByIdNative(@Param("id") Long id);
+
+    Optional<Pod> findByIdAndInprogressStatus(Long podId, InprogressStatus inprogressStatus);
+
 }
