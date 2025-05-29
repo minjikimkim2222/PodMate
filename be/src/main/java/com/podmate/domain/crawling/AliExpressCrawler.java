@@ -30,7 +30,7 @@ public class AliExpressCrawler implements PlatformCrawler{
         ChromeOptions options = new ChromeOptions();
 
          options.addArguments("--headless"); // UI 없이 백그라운드 실행 (배포시에 주석 해제)
-        options.addArguments("--proxy-server=http://211.225.214.241:80");
+        // options.addArguments("--proxy-server=http://211.225.214.241:80");
 
 
         // 크롤링 봇 방지
