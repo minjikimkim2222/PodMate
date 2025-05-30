@@ -49,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -265,18 +266,26 @@ public class MyPageService {
         List<Pod> pods = getPodList(userId, POD_MEMBER, PodStatus.IN_PROGRESS);
         return pods.stream()
                 .map(pod -> {
-                    Delivery delivery = deliveryRepository.findByPod_Id(pod.getId())
-                            .orElseThrow(() -> new DeliveryNotFoundException());
+                    Optional<Delivery> deliveryOpt = deliveryRepository.findByPod_Id(pod.getId());
 
-                    PodResponseDto.DeliveryDto deliveryDto = PodResponseDto.DeliveryDto.builder()
-                            .courierCompany(delivery.getCourierCompany())
-                            .trackingNum(delivery.getTrackingNum())
-                            .build();
+                    if(deliveryOpt.isPresent()) {
+                        PodResponseDto.DeliveryDto deliveryDto = PodResponseDto.DeliveryDto.builder()
+                                .courierCompany(deliveryOpt.get().getCourierCompany())
+                                .trackingNum(deliveryOpt.get().getTrackingNum())
+                                .build();
 
-                    if (pod.getPodType() == PodType.MINIMUM) {
-                        return buildMinimumInprogressJoinedResponseDto(pod, deliveryDto);
-                    } else {
-                        return buildGroupBuyInprogressJoinedResponseDto(pod, deliveryDto);
+                        if (pod.getPodType() == PodType.MINIMUM) {
+                            return buildMinimumInprogressJoinedResponseDto(pod, deliveryDto);
+                        } else {
+                            return buildGroupBuyInprogressJoinedResponseDto(pod, deliveryDto);
+                        }
+                    }
+                    else{
+                        if (pod.getPodType() == PodType.MINIMUM) {
+                            return buildMinimumStatusResponseDto(pod);
+                        } else {
+                            return buildGroupBuyStatusResponseDto(pod);
+                        }
                     }
                 })
                 .collect(Collectors.toList());

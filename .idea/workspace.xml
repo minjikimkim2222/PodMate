@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad1aa387-a2b6-4ccb-a59e-292882510bfd" name="Changes" comment="commit">
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/cbe76c2d-bcf1-4ae0-b502-845cdf59804c.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/cbe76c2d-bcf1-4ae0-b502-845cdf59804c.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/pod/converter/PodConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/pod/converter/PodConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/pod/dto/PodResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/pod/dto/PodResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/mypage/application/MyPageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/mypage/application/MyPageService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/global/util/oauth2/OAuth2LoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/global/util/oauth2/OAuth2LoginSuccessHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -252,7 +248,7 @@
       <workItem from="1748435823800" duration="7555000" />
       <workItem from="1748444369181" duration="118000" />
       <workItem from="1748617532422" duration="234000" />
-      <workItem from="1748622213121" duration="1696000" />
+      <workItem from="1748622213121" duration="3440000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
