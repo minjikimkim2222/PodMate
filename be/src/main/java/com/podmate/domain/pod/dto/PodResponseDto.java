@@ -55,6 +55,7 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private String podName;
         private String podType;
         private String podStatus;
+        private String inprogressStatus;
         private String platform;
         private int goalAmount;
         private int currentAmount;
@@ -127,10 +128,11 @@ public class PodResponseDto{ //두 유형을 list안에 내보내려면 공통 i
         private Long podId;
         private String podName;
         private String podType;
+        private String podStatus;
+        private String inprogressStatus;
         private String itemUrl;
         private int goalAmount;     //목표 금액 or 목표 인원
         private int currentAmount;  //현재 금액 or 현재 인원
-        private String podStatus;
     }
 
     @Builder
