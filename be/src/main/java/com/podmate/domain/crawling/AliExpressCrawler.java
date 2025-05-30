@@ -30,11 +30,13 @@ public class AliExpressCrawler implements PlatformCrawler{
         ChromeOptions options = new ChromeOptions();
 
          options.addArguments("--headless"); // UI 없이 백그라운드 실행 (배포시에 주석 해제)
+        // options.addArguments("--proxy-server=http://211.225.214.241:80");
+
 
         // 크롤링 봇 방지
         // 1. User-Agent 설정 (필수 - 봇 탐지 우회의 기본)
         // options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"); -- 윈도우 환경
-      //  options.addArguments("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");  // -- mac 환경
+        options.addArguments("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");  // -- mac 환경
 
         // 2. 자동화 제어 플래그 비활성화 (많은 사이트가 이 플래그로 봇 감지)
         options.addArguments("--disable-blink-features=AutomationControlled");
