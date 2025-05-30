@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad1aa387-a2b6-4ccb-a59e-292882510bfd" name="Changes" comment="commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/mypage/application/MyPageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/domain/mypage/application/MyPageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/be/src/main/java/com/podmate/global/util/oauth2/OAuth2LoginSuccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/be/src/main/java/com/podmate/global/util/oauth2/OAuth2LoginSuccessHandler.java" afterDir="false" />
-    </list>
+    <list default="true" id="ad1aa387-a2b6-4ccb-a59e-292882510bfd" name="Changes" comment="commit" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -248,7 +244,7 @@
       <workItem from="1748435823800" duration="7555000" />
       <workItem from="1748444369181" duration="118000" />
       <workItem from="1748617532422" duration="234000" />
-      <workItem from="1748622213121" duration="3440000" />
+      <workItem from="1748622213121" duration="3817000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
