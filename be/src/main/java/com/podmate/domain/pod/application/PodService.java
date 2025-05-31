@@ -297,35 +297,21 @@ public class PodService {
             throw new PodUserMappingNotFoundException();
         }
 
-        InprogressStatus currentStatus = pod.getInprogressStatus();
         String nextStatus = request.getStatus();
 
-        // 상태 전이 조건 검사
-        if ("ORDER_COMPLETED".equals(nextStatus)) {
-            if (currentStatus != InprogressStatus.PENDING_ORDER) {
-                throw new PendingOrderMismatchException();
-            }
-            pod.updateInprogressStatus(InprogressStatus.ORDER_COMPLETED);
-
-            notificationService.notifyAddTrackingNum(user.getId(), pod);
-            //팟원에게 주문 완료 알림 전송
-            List<User> receivers = podUserMappingRepository.findMembersByPodId(pod.getId());
-            for (User receiver : receivers) {
-                notificationService.notifyOrderPlaced(receiver.getId(), pod);
-            }
-        }
-        else if("DELIVERED".equals(nextStatus)) {
+        // 상태 업데이트는 항상 허용
+        if (!nextStatus.equals("DELIVERED") && !nextStatus.equals("SHIPPING")) {
+            InprogressStatus next = InprogressStatus.valueOf(nextStatus);
+            pod.updateInprogressStatus(next);
+        }else{
             Delivery delivery = deliveryRepository.findByPod_Id(pod.getId())
-                .orElseThrow(() -> new DeliveryNotFoundException());
+                    .orElseThrow(() -> new DeliveryNotFoundException());
+            DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(nextStatus);
+            delivery.updateDeliveryStatus(deliveryStatus);
 
-            if (delivery.getDeliveryStatus() != DeliveryStatus.SHIPPING){
-                throw new ShippingMismatchException();
+            if (deliveryStatus == DeliveryStatus.DELIVERED) {
+                notificationService.notifyDeliveryArrived(user.getId(), pod);
             }
-            delivery.updateDeliveryStatus(DeliveryStatus.DELIVERED);
-            notificationService.notifyDeliveryArrived(user.getId(), pod);
-        }
-        else{
-            throw new InvalidStatusException();
         }
     }
 
