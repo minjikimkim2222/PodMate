@@ -30,4 +30,10 @@ public class JJimController {
         List<JJimResponseDto> jjimList = jjimService.getJJimList(customOAuth2User.getUserId());
         return BaseResponse.onSuccess(SuccessStatus._OK, jjimList);
     }
+
+    @PatchMapping
+    public BaseResponse<String> cancelJJim(@RequestBody JJimRequestDto requestDto, @AuthenticationPrincipal CustomOAuth2User customOAuth2User){
+        jjimService.cancelJJim(requestDto.getPodId(), customOAuth2User.getUserId());
+        return BaseResponse.onSuccess(SuccessStatus._OK, "successfully canceled jjim");
+    }
 }

@@ -4,6 +4,7 @@ import com.podmate.domain.jjim.domain.entity.JJim;
 import com.podmate.domain.jjim.domain.repository.JJimRepository;
 import com.podmate.domain.jjim.dto.JJimResponseDto;
 import com.podmate.domain.jjim.exception.DuplicateJJimException;
+import com.podmate.domain.jjim.exception.JJimNotFoundException;
 import com.podmate.domain.pod.domain.entity.Pod;
 import com.podmate.domain.pod.domain.repository.PodRepository;
 import com.podmate.domain.pod.exception.PodNotFoundException;
@@ -65,5 +66,22 @@ public class JJimService {
                             .build();
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void cancelJJim(Long podId, Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        Pod pod = podRepository.findById(podId)
+                .orElseThrow(() -> new PodNotFoundException());
+
+        if(!podUserMappingRepository.existsByPod_IdAndUser_Id(pod.getId(), user.getId())){
+            throw new PodUserMappingNotFoundException();
+        }
+        if (jjimRepository.existsByUserIdAndPodId(user.getId(), pod.getId())) {
+            jjimRepository.deleteByUserIdAndPodId(user.getId(), pod.getId());
+        } else {
+            throw new JJimNotFoundException();
+        }
     }
 }

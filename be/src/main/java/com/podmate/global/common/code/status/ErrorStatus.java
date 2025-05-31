@@ -45,6 +45,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // --- JJIM ---
     DUPLICATE_JJIM(HttpStatus.CONFLICT, "JJIM_409", "이미 찜한 팟입니다."),
+    JJIM_NOT_FOUND(HttpStatus.NOT_FOUND, "JJIM_404", "존재하지 않는 찜입니다."),
 
     // --- PLATFORMINFO --
     PLATFORM_NOT_SUPPORTED(HttpStatus.NOT_FOUND, "PLATFORM_404", "지원하지 않는 플랫폼입니다."),

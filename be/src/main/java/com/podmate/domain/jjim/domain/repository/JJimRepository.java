@@ -10,4 +10,5 @@ import java.util.List;
 public interface JJimRepository extends JpaRepository<JJim, Long> {
     List<JJim> findAllByUserId(Long userId);
     boolean existsByUserIdAndPodId(Long userId, Long podId);
+    void deleteByUserIdAndPodId(Long userId, Long podId);
 }

@@ -90,7 +90,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                         "refreshToken", refreshToken
                 )
         );
-        //gresponse.getWriter().write(body);
+        //response.getWriter().write(body);
 			String redirectUrl = UriComponentsBuilder
         .fromUriString("http://localhost:5173/oauth/redirect") // ✅ 프론트 리디렉션 주소
         .queryParam("status", "success")
