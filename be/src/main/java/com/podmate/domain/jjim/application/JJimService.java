@@ -37,9 +37,9 @@ public class JJimService {
         Pod pod = podRepository.findById(podId)
                 .orElseThrow(() -> new PodNotFoundException());
 
-        if(!podUserMappingRepository.existsByPod_IdAndUser_Id(pod.getId(), user.getId())){
-            throw new PodUserMappingNotFoundException();
-        }
+//        if(!podUserMappingRepository.existsByPod_IdAndUser_Id(pod.getId(), user.getId())){
+//            throw new PodUserMappingNotFoundException();
+//        }
         if (jjimRepository.existsByUserIdAndPodId(user.getId(), pod.getId())) {
             throw new DuplicateJJimException();
         }
